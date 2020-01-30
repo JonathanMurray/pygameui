@@ -6,7 +6,8 @@ from pygame.font import Font
 from pygame.math import Vector2
 from pygame.time import Clock
 
-from ui import BackgroundGrid, Component, VerticalListContainer, Button, Text, Style
+from containers import VerticalListContainer
+from ui import BackgroundGrid, Component, Button, Text, Style
 
 SCREEN_RESOLUTION = (800, 600)
 COLOR_WHITE = Color(255, 255, 255, 0)
@@ -23,7 +24,7 @@ def main():
   button2 = button(font, screen, (200, 100), lambda: print("C"), "Click C")
   div = Component(size=(200, 100), screen=screen, style=Style(background=COLOR_WHITE))
   button3 = button(font, screen, (200, 100), lambda: print("B"), "Click B")
-  container = VerticalListContainer(500, screen, [button2, div, button3], 5, 20, border=COLOR_WHITE,
+  container = VerticalListContainer(500, screen, [button2, div, button3], 5, 20, border_color=COLOR_WHITE,
                                     background=(0, 0, 150, 0))
   container.set_pos(Vector2(0, 0))
 
@@ -48,9 +49,10 @@ def main():
 def button(font, screen, size, callback, text: str):
   return Button(size=size, screen=screen, callback=callback,
                 text=Text(screen, font, COLOR_WHITE, text),
-                style=Style(background=Color(50, 50, 100, 0), border=Color(150, 150, 150, 0)),
-                style_hovered=Style(background=Color(50, 50, 100), border=Color(180, 180, 180, 0)),
-                style_onclick=Style(background=Color(50, 50, 100), border=Color(200, 255, 200, 0)))
+                style=Style(background=Color(50, 50, 100, 0), border_color=Color(150, 150, 150, 0)),
+                style_hovered=Style(background=Color(50, 50, 100), border_color=Color(180, 180, 180, 0)),
+                style_onclick=Style(background=Color(50, 50, 100), border_color=Color(200, 255, 200, 0),
+                                    border_width=2))
 
 
 def handle_exit(event):
