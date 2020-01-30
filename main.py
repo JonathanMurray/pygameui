@@ -24,21 +24,22 @@ def main():
   left_buttons = [
     button(font, screen, (200, 48), callback=lambda: print("hello"), text="click"),
     button(font, screen, (200, 48), callback=lambda: print("hello"), text="click"),
+    button(font, screen, (200, 48), callback=lambda: print("hello"), text="click"),
   ]
   right_buttons = [
     button(font, screen, (200, 32), callback=lambda: print("bye"), text="click"),
     button(font, screen, (200, 32), callback=lambda: print("bye"), text="click"),
     button(font, screen, (200, 32), callback=lambda: print("bye"), text="click"),
   ]
-  left_menu_bar = ListContainer(width="fit_contents", height="fit_contents", screen=screen, components=left_buttons,
+  left_menu_bar = ListContainer(width="fit_contents", height="fill_parent", screen=screen, children=left_buttons,
                                 margin=5, padding=5,
                                 orientation=Orientation.VERTICAL,
-                                style=Style(background=(150, 150, 255, 0)))
-  right_menu_bar = ListContainer(width="fit_contents", height="fit_contents", screen=screen, components=right_buttons,
+                                style=Style(background=(150, 150, 255, 0), border_color=COLOR_WHITE))
+  right_menu_bar = ListContainer(width="fit_contents", height="fit_contents", screen=screen, children=right_buttons,
                                  margin=5, padding=5,
                                  orientation=Orientation.VERTICAL,
                                  style=Style(background=(150, 210, 255, 0)))
-  container = ListContainer(width=800, height=200, screen=screen, components=[left_menu_bar, right_menu_bar], margin=5,
+  container = ListContainer(width=800, height=200, screen=screen, children=[left_menu_bar, right_menu_bar], margin=5,
                             padding=5, orientation=Orientation.HORIZONTAL,
                             style=Style(border_color=COLOR_WHITE, background=(0, 0, 150, 0)))
   container.set_pos(Vector2(0, 400))
