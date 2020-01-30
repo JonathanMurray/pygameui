@@ -1,4 +1,5 @@
-from typing import List, Tuple
+from enum import Enum
+from typing import List, Tuple, Any
 
 from pygame.math import Vector2
 
@@ -44,35 +45,45 @@ class AbsolutePosContainer(AbstractContainer):
       component.set_pos(pos + relative_pos)
 
 
-class HorizontalListContainer(AbstractContainer):
-  def __init__(self, size: Tuple[int, int], screen, components: List[Component], margin: int, padding: int):
-    super().__init__(size, screen, components)
+class Orientation(Enum):
+  HORIZONTAL = 1
+  VERTICAL = 2
+
+
+class ListContainer(AbstractContainer):
+  def __init__(self, width: Any, height: Any, screen, components: List[Component], margin: int, padding: int,
+      orientation: Orientation, **kwargs):
+    super().__init__((width, height), screen, components, **kwargs)
     self.margin = margin
     self.padding = padding
+    if width == 'fit_contents':
+      if orientation == Orientation.HORIZONTAL:
+        children_sum = sum(c.size[0] for c in self.components)
+        container_width = children_sum + (len(self.components) - 1) * self.margin + 2 * self.padding
+      else:
+        container_width = max(c.size[0] for c in self.components) + self.padding * 2
+    else:
+      container_width = width
+    if height == 'fit_contents':
+      if orientation == Orientation.HORIZONTAL:
+        container_height = max(c.size[1] for c in self.components) + self.padding * 2
+      else:
+        children_sum = sum(c.size[1] for c in self.components)
+        container_height = children_sum + (len(self.components) - 1) * self.margin + 2 * self.padding
+    else:
+      container_height = height
+    self.size = (container_width, container_height)
+    self.orientation = orientation
 
   def set_pos(self, pos: Vector2):
     super().set_pos(pos)
     relative_pos = Vector2(self.padding, self.padding)
     for component in self.components:
       component.set_pos(pos + relative_pos)
-      relative_pos += (component.size[0] + self.margin, 0)
-
-
-class VerticalListContainer(AbstractContainer):
-  def __init__(self, width: int, screen, components: List[Component], margin: int, padding: int, **kwargs):
-    super().__init__((width, 1), screen, components, **kwargs)
-    self.margin = margin
-    self.padding = padding
-    children_sum_height = sum(c.size[1] for c in self.components)
-    container_height = children_sum_height + (len(self.components) - 1) * self.margin + 2 * self.padding
-    self.size = (self.size[0], container_height)
-
-  def set_pos(self, pos: Vector2):
-    super().set_pos(pos)
-    relative_pos = Vector2(self.padding, self.padding)
-    for component in self.components:
-      component.set_pos(pos + relative_pos)
-      relative_pos += (0, component.size[1] + self.margin)
+      if self.orientation == Orientation.HORIZONTAL:
+        relative_pos += (component.size[0] + self.margin, 0)
+      else:
+        relative_pos += (0, component.size[1] + self.margin)
 
 
 class EvenSpacingContainer(AbstractContainer):
@@ -83,7 +94,10 @@ class EvenSpacingContainer(AbstractContainer):
   def set_pos(self, pos: Vector2):
     super().set_pos(pos)
     width_sum = sum([component.size[0] for component in self.components])
-    margin = (self.size[0] - width_sum - self.padding * 2) / (len(self.components) - 1)
+    if len(self.components) < 2:
+      margin = 0
+    else:
+      margin = (self.size[0] - width_sum - self.padding * 2) / (len(self.components) - 1)
     relative_pos = Vector2(self.padding, self.padding)
     for component in self.components:
       component.set_pos(pos + relative_pos)
