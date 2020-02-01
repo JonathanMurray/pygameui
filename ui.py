@@ -84,9 +84,11 @@ class Component:
   def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):
     pass
 
+  # TODO Remove if not needed
   def _on_hover(self, mouse_pos: Tuple[int, int]):
     pass
 
+  # TODO Remove if not needed
   def _on_blur(self):
     pass
 
