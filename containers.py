@@ -134,6 +134,8 @@ class EvenSpacingContainer(AbstractContainer):
       relative_pos += (component.size[0] + margin, 0)
 
 
+# NOTE: Scroll container sets "local" positions for its children, in contrast to other containers
+# The children are rendered on a separate surface and then blitted / clipped onto the screen
 class ScrollContainer(AbstractContainer):
   def __init__(self, height: Any, children: List[Component], padding: int, margin: int, **kwargs):
     container_width = max(c.size[0] for c in children) + padding * 2
