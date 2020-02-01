@@ -12,9 +12,9 @@ COLOR_WHITE = Color(255, 255, 255, 0)
 class Checkbox(Component):
   def __init__(self, size: Tuple[int, int], screen, label: FormattedText, **kwargs):
     super().__init__(size, screen, **kwargs)
-    self.callback: Callable[[bool], Any] = kwargs.get('callback')
-    self.label = label
-    self.style_on_click = kwargs.get('style_onclick')
+    self._callback: Callable[[bool], Any] = kwargs.get('callback')
+    self._label = label
+    self._style_on_click = kwargs.get('style_onclick')
     self._cooldown = 0
     self._checked = False
     self._update_text()
@@ -23,75 +23,75 @@ class Checkbox(Component):
     if self._cooldown > 0:
       self._cooldown = max(self._cooldown - elapsed_time, 0)
       if self._cooldown == 0:
-        self.active_style = self.style_hovered if self.is_hovered else self.style
+        self._active_style = self._style_hovered if self._is_hovered else self._style
 
   def set_callback(self, callback: Callable[[bool], Any]):
-    self.callback = callback
+    self._callback = callback
 
   def set_pos(self, pos: Vector2):
     super().set_pos(pos)
-    text_pos = Vector2(self.rect.centerx - self.label.size[0] / 2,
-                       self.rect.centery - self.label.size[1] / 2)
-    self.label.set_pos(text_pos)
+    text_pos = Vector2(self._rect.centerx - self._label.size[0] / 2,
+                       self._rect.centery - self._label.size[1] / 2)
+    self._label.set_pos(text_pos)
 
   def _render(self):
-    self.label.render()
+    self._label.render()
 
   def _on_click(self, mouse_pos: Tuple[int, int]):
     self._checked = not self._checked
     self._update_text()
-    if self.callback:
-      self.callback(self._checked)
-    self.active_style = self.style_on_click
+    if self._callback:
+      self._callback(self._checked)
+    self._active_style = self._style_on_click
     self._cooldown = 150
 
   def _update_text(self):
-    self.label.format_text("x" if self._checked else "_")
+    self._label.format_text("x" if self._checked else "_")
 
 
 class Button(Component):
   def __init__(self, size: Tuple[int, int], screen, label: Text, **kwargs):
     super().__init__(size, screen, **kwargs)
-    self.callback = kwargs.get('callback')
-    self.label = label
-    self.style_on_click = kwargs.get('style_onclick')
+    self._callback = kwargs.get('callback')
+    self._label = label
+    self._style_on_click = kwargs.get('style_onclick')
     self._cooldown = 0
 
   def update(self, elapsed_time: int):
     if self._cooldown > 0:
       self._cooldown = max(self._cooldown - elapsed_time, 0)
       if self._cooldown == 0:
-        self.active_style = self.style_hovered if self.is_hovered else self.style
+        self._active_style = self._style_hovered if self._is_hovered else self._style
 
   def set_callback(self, callback: Callable[[], Any]):
-    self.callback = callback
+    self._callback = callback
 
   def set_pos(self, pos: Vector2):
     super().set_pos(pos)
-    text_pos = Vector2(self.rect.centerx - self.label.size[0] / 2,
-                       self.rect.centery - self.label.size[1] / 2)
-    self.label.set_pos(text_pos)
+    text_pos = Vector2(self._rect.centerx - self._label.size[0] / 2,
+                       self._rect.centery - self._label.size[1] / 2)
+    self._label.set_pos(text_pos)
 
   def _render(self):
-    self.label.render()
+    self._label.render()
 
   def _on_click(self, mouse_pos: Tuple[int, int]):
-    if self.callback:
-      self.callback()
-    self.active_style = self.style_on_click
+    if self._callback:
+      self._callback()
+    self._active_style = self._style_on_click
     self._cooldown = 150
 
 
 class ColorToggler(Button):
   def __init__(self, size: Tuple[int, int], screen, label: Text, colors: List[Color], **kwargs):
     super().__init__(size, screen, label, **kwargs)
-    self.colors = colors
-    self.index = 0
-    self.background = self.colors[self.index]
+    self._colors = colors
+    self._index = 0
+    self._background = self._colors[self._index]
 
   def _on_click(self, mouse_pos: Tuple[int, int]):
-    self.index = (self.index + 1) % len(self.colors)
-    self.background = self.colors[self.index]
+    self._index = (self._index + 1) % len(self._colors)
+    self._background = self._colors[self._index]
 
 
 def button(font, screen, size: Tuple[int, int], callback: Callable[[], Any], label: str):
