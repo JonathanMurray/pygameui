@@ -6,7 +6,7 @@ from pygame.math import Vector2
 from ui import Component, FormattedText
 from ui import Text, Style
 
-COLOR_WHITE = Color(255, 255, 255, 0)
+COLOR_WHITE = Color(255, 255, 255)
 
 
 class Checkbox(Component):
@@ -97,16 +97,16 @@ class ColorToggler(Button):
 def button(font, screen, size: Tuple[int, int], callback: Callable[[], Any], label: str):
   return Button(size=size, screen=screen, callback=callback,
                 label=Text(screen, font, COLOR_WHITE, label),
-                style=Style(background=Color(50, 50, 100, 0), border_color=Color(150, 150, 150, 0)),
-                style_hovered=Style(background=Color(80, 80, 120), border_color=Color(180, 180, 180, 0)),
-                style_onclick=Style(background=Color(80, 80, 120), border_color=Color(200, 255, 200, 0),
+                style=Style(background=Color(50, 50, 100), border_color=Color(150, 150, 150)),
+                style_hovered=Style(background=Color(80, 80, 120), border_color=Color(180, 180, 180)),
+                style_onclick=Style(background=Color(80, 80, 120), border_color=Color(200, 255, 200),
                                     border_width=2))
 
 
 def checkbox(font, screen, size: Tuple[int, int], callback: Callable[[bool], Any], label: str):
   return Checkbox(size=size, screen=screen, callback=callback,
                   label=FormattedText(screen, font, COLOR_WHITE, label + "  [%s]", None),
-                  style=Style(background=Color(50, 50, 100, 0), border_color=Color(150, 150, 150, 0)),
-                  style_hovered=Style(background=Color(80, 80, 120), border_color=Color(180, 180, 180, 0)),
-                  style_onclick=Style(background=Color(80, 80, 120), border_color=Color(200, 255, 200, 0),
+                  style=Style(background=Color(50, 50, 100), border_color=Color(150, 150, 150)),
+                  style_hovered=Style(background=Color(80, 80, 120), border_color=Color(180, 180, 180)),
+                  style_onclick=Style(background=Color(80, 80, 120), border_color=Color(200, 255, 200),
                                       border_width=2))
