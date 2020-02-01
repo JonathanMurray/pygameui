@@ -3,6 +3,7 @@ from typing import List, Tuple, Any, Optional
 
 import pygame
 from pygame.math import Vector2
+from pygame.surface import Surface
 
 from ui import Component
 
@@ -12,9 +13,9 @@ class AbstractContainer(Component):
     super().__init__(size, screen, **kwargs)
     self._children = children
 
-  def _render(self):
+  def _render(self, surface):
     for component in self._children:
-      component.render()
+      component.render(surface)
 
   def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):
     for component in self._children:
@@ -136,7 +137,8 @@ class EvenSpacingContainer(AbstractContainer):
 class ScrollContainer(AbstractContainer):
   def __init__(self, height: Any, screen, children: List[Component], padding: int, margin: int, **kwargs):
     container_width = max(c.size[0] for c in children) + padding * 2
-    super().__init__((container_width, height), screen, children, **kwargs)
+    size = (container_width, height)
+    super().__init__(size, screen, children, **kwargs)
     sum_height = sum(c.size[1] for c in children) + padding * 2 + margin * (len(children) - 1)
     self._max_scroll = sum_height - height
     self._padding = padding
@@ -145,23 +147,34 @@ class ScrollContainer(AbstractContainer):
 
   def scroll(self, dy: int):
     self._scroll_y = max(0, min(self._scroll_y + dy, self._max_scroll))
-    self.set_pos(self._rect.topleft)
-    self._update_children_visibility()
-    # render parts of elements at the edge
-    # add visual scrollbar that is rendered at right-hand side
+    self._update_children()
 
-  def _update_children_visibility(self):
+  def _render(self, surface):
+    s = Surface(self.size, pygame.SRCALPHA)
     for component in self._children:
-      inside = self._rect.colliderect(component._rect)
-      component.set_visible(inside)
+      component.render(s)
+    surface.blit(s, self._rect.topleft)
 
   def set_pos(self, pos: Vector2):
     super().set_pos(pos)
-    relative_pos = Vector2(self._padding, self._padding - self._scroll_y)
+    self._update_children()
+
+  def handle_mouse_motion(self, mouse_pos: Tuple[int, int]):
+    super().handle_mouse_motion(mouse_pos)
+    local_mouse_pos = (mouse_pos[0] - self._rect.x, mouse_pos[1] - self._rect.y)
     for component in self._children:
-      component.set_pos(pos + relative_pos)
-      relative_pos += (0, component.size[1] + self._margin)
-    self._update_children_visibility()
+      component.handle_mouse_motion(local_mouse_pos)
+
+  def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):
+    local_mouse_pos = (mouse_pos[0] - self._rect.x, mouse_pos[1] - self._rect.y)
+    for component in self._children:
+      component.handle_mouse_click(local_mouse_pos)
+
+  def _update_children(self):
+    pos = Vector2(self._padding, self._padding - self._scroll_y)
+    for component in self._children:
+      component.set_pos(pos)
+      pos += (0, component.size[1] + self._margin)
 
   def handle_button_click(self, key):
     super().handle_button_click(key)

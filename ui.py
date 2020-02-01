@@ -31,7 +31,6 @@ class Style:
 class Component:
   def __init__(self, size: Tuple[int, int], screen, **kwargs):
     self.size = size
-    self._screen = screen
     self._rect = None
     self._style = kwargs.get('style')
     self._style_hovered = kwargs.get('style_hovered')
@@ -65,14 +64,14 @@ class Component:
       self._on_hover(mouse_pos)
     self._is_hovered = hover
 
-  def render(self):
+  def render(self, surface):
     self._assert_initialized()
     if self._is_visible:
       if self._active_style and self._active_style.background:
-        pygame.draw.rect(self._screen, self._active_style.background, self._rect)
-      self._render()
+        pygame.draw.rect(surface, self._active_style.background, self._rect)
+      self._render(surface)
       if self._active_style and self._active_style.border_color:
-        pygame.draw.rect(self._screen, self._active_style.border_color, self._rect, self._active_style.border_width)
+        pygame.draw.rect(surface, self._active_style.border_color, self._rect, self._active_style.border_width)
 
   def set_visible(self, visible: bool):
     self._is_visible = visible
@@ -80,7 +79,7 @@ class Component:
   def is_visible(self) -> bool:
     return self._is_visible
 
-  def _render(self):
+  def _render(self, surface):
     pass
 
   def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):
@@ -108,8 +107,8 @@ class Text(Component):
     self.size = self._font.size(text)
     self._rendered_text = self._font.render(text, True, self._color)
 
-  def _render(self):
-    self._screen.blit(self._rendered_text, self._rect)
+  def _render(self, surface):
+    surface.blit(self._rendered_text, self._rect)
 
 
 class FormattedText(Component):
@@ -127,8 +126,8 @@ class FormattedText(Component):
     self.size = self._font.size(text)
     self._rendered_text = self._font.render(text, True, self._color)
 
-  def _render(self):
-    self._screen.blit(self._rendered_text, self._rect)
+  def _render(self, surface):
+    surface.blit(self._rendered_text, self._rect)
 
 
 class Counter(Component):
@@ -142,8 +141,8 @@ class Counter(Component):
     super().set_pos(pos)
     self._update_text_pos()
 
-  def _render(self):
-    self._text.render()
+  def _render(self, surface):
+    self._text.render(surface)
 
   def increment(self):
     self._count += 1

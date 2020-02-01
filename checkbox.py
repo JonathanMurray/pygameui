@@ -38,13 +38,13 @@ class Checkbox(Component):
     w = self._label._rect.h * 0.75
     self._box = Rect(self._label._rect.right + 10, self._label._rect.bottom - w - 1, w, w)
 
-  def _render(self):
-    self._label.render()
-    pygame.draw.rect(self._screen, Color(100, 100, 100), self._box)
-    pygame.draw.rect(self._screen, COLOR_WHITE, self._box, 1)
+  def _render(self, surface):
+    self._label.render(surface)
+    pygame.draw.rect(surface, Color(100, 100, 100), self._box)
+    pygame.draw.rect(surface, COLOR_WHITE, self._box, 1)
     if self._checked:
-      pygame.draw.line(self._screen, COLOR_WHITE, self._box.topleft, (self._box.right - 1, self._box.bottom - 1))
-      pygame.draw.line(self._screen, COLOR_WHITE, (self._box.left, self._box.bottom - 1),
+      pygame.draw.line(surface, COLOR_WHITE, self._box.topleft, (self._box.right - 1, self._box.bottom - 1))
+      pygame.draw.line(surface, COLOR_WHITE, (self._box.left, self._box.bottom - 1),
                        (self._box.right - 1, self._box.top))
 
   def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):

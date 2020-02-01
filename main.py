@@ -87,7 +87,7 @@ def main():
 
     screen.fill(background_color)
     grid.render()
-    container.render()
+    container.render(screen)
     pygame.display.flip()
 
 
