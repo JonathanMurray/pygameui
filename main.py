@@ -6,7 +6,7 @@ from pygame.font import Font
 from pygame.math import Vector2
 from pygame.time import Clock
 
-from buttons import button
+from buttons import button, checkbox
 from containers import ListContainer, Orientation
 from ui import BackgroundGrid, Style
 
@@ -23,14 +23,15 @@ def main():
   grid = BackgroundGrid(screen, SCREEN_RESOLUTION, Color(20, 20, 20, 0), 32)
 
   left_buttons = [
-    button(font, screen, (200, 48), callback=lambda: print("hello"), text="click"),
-    button(font, screen, (200, 48), callback=lambda: print("hello"), text="click"),
-    button(font, screen, (200, 48), callback=lambda: print("hello"), text="click"),
+    button(font, screen, (200, 48), callback=lambda: print("hello"), label="click"),
+    button(font, screen, (200, 48), callback=lambda: print("hello"), label="click"),
+    button(font, screen, (200, 48), callback=lambda: print("hello"), label="click"),
   ]
   right_buttons = [
-    button(font, screen, (200, 32), callback=lambda: print("bye"), text="click"),
-    button(font, screen, (200, 32), callback=lambda: print("bye"), text="click"),
-    button(font, screen, (200, 32), callback=lambda: print("bye"), text="click"),
+    button(font, screen, (200, 32), callback=lambda: print("bye"), label="click"),
+    button(font, screen, (200, 32), callback=lambda: print("bye"), label="click"),
+    checkbox(font, screen, (200, 32), callback=lambda checked: print("A: %s" % checked), label="A"),
+    checkbox(font, screen, (200, 32), callback=lambda checked: print("B: %s" % checked), label="B"),
   ]
   left_menu_bar = ListContainer(width="fit_contents", height="fill_parent", screen=screen, children=left_buttons,
                                 margin=5, padding=5,

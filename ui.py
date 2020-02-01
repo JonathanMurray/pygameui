@@ -1,4 +1,4 @@
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Any
 
 import pygame
 from pygame.color import Color
@@ -89,8 +89,32 @@ class Component:
 class Text(Component):
   def __init__(self, screen, font: Font, color: Color, text: str, **kwargs):
     super().__init__(font.size(text), screen, **kwargs)
-    self.font = font
-    self.rendered_text = self.font.render(text, True, color)
+    self._font = font
+    self._color = color
+    self._rendered_text = self._font.render(text, True, color)
+
+  def set_text(self, text: str):
+    self.size = self._font.size(text)
+    self._rendered_text = self._font.render(text, True, self._color)
 
   def _render(self):
-    self.screen.blit(self.rendered_text, self.rect)
+    self.screen.blit(self._rendered_text, self.rect)
+
+
+class FormattedText(Component):
+  def __init__(self, screen, font: Font, color: Color, format_string: str, format_variable: Any, **kwargs):
+    text = format_string % format_variable
+    text_size = font.size(text)
+    super().__init__(text_size, screen, **kwargs)
+    self._format_string = format_string
+    self._font = font
+    self._color = color
+    self._rendered_text = self._font.render(text, True, color)
+
+  def format_text(self, variable: Any):
+    text = self._format_string % variable
+    self.size = self._font.size(text)
+    self._rendered_text = self._font.render(text, True, self._color)
+
+  def _render(self):
+    self.screen.blit(self._rendered_text, self.rect)
