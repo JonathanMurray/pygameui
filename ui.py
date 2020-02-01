@@ -37,6 +37,7 @@ class Component:
     self._style_hovered = kwargs.get('style_hovered')
     self._is_hovered = False
     self._active_style = self._style
+    self._is_visible = True
 
   def update(self, elapsed_time: int):
     pass
@@ -63,11 +64,18 @@ class Component:
 
   def render(self):
     self._assert_initialized()
-    if self._active_style and self._active_style.background:
-      pygame.draw.rect(self._screen, self._active_style.background, self._rect)
-    self._render()
-    if self._active_style and self._active_style.border_color:
-      pygame.draw.rect(self._screen, self._active_style.border_color, self._rect, self._active_style.border_width)
+    if self._is_visible:
+      if self._active_style and self._active_style.background:
+        pygame.draw.rect(self._screen, self._active_style.background, self._rect)
+      self._render()
+      if self._active_style and self._active_style.border_color:
+        pygame.draw.rect(self._screen, self._active_style.border_color, self._rect, self._active_style.border_width)
+
+  def set_visible(self, visible: bool):
+    self._is_visible = visible
+
+  def is_visible(self) -> bool:
+    return self._is_visible
 
   def _render(self):
     pass

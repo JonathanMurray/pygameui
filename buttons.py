@@ -10,13 +10,13 @@ COLOR_WHITE = Color(255, 255, 255)
 
 
 class Checkbox(Component):
-  def __init__(self, size: Tuple[int, int], screen, label: FormattedText, **kwargs):
+  def __init__(self, size: Tuple[int, int], screen, label: FormattedText, checked: bool = False, **kwargs):
     super().__init__(size, screen, **kwargs)
     self._callback: Callable[[bool], Any] = kwargs.get('callback')
     self._label = label
     self._style_on_click = kwargs.get('style_onclick')
     self._cooldown = 0
-    self._checked = False
+    self._checked = checked
     self._update_text()
 
   def update(self, elapsed_time: int):
@@ -95,7 +95,9 @@ class ColorToggler(Button):
 
 
 def button(font, screen, size: Tuple[int, int], callback: Callable[[], Any], label: str):
-  return Button(size=size, screen=screen, callback=callback,
+  return Button(size=size,
+                screen=screen,
+                callback=callback,
                 label=Text(screen, font, COLOR_WHITE, label),
                 style=Style(background=Color(50, 50, 100), border_color=Color(150, 150, 150)),
                 style_hovered=Style(background=Color(80, 80, 120), border_color=Color(180, 180, 180)),
@@ -103,9 +105,12 @@ def button(font, screen, size: Tuple[int, int], callback: Callable[[], Any], lab
                                     border_width=2))
 
 
-def checkbox(font, screen, size: Tuple[int, int], callback: Callable[[bool], Any], label: str):
-  return Checkbox(size=size, screen=screen, callback=callback,
+def checkbox(font, screen, size: Tuple[int, int], callback: Callable[[bool], Any], label: str, checked: bool = False):
+  return Checkbox(size=size,
+                  screen=screen,
+                  callback=callback,
                   label=FormattedText(screen, font, COLOR_WHITE, label + "  [%s]", None),
+                  checked=checked,
                   style=Style(background=Color(50, 50, 100), border_color=Color(150, 150, 150)),
                   style_hovered=Style(background=Color(80, 80, 120), border_color=Color(180, 180, 180)),
                   style_onclick=Style(background=Color(80, 80, 120), border_color=Color(200, 255, 200),

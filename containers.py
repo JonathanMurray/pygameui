@@ -35,13 +35,13 @@ class AbstractContainer(Component):
 
 class AbsolutePosContainer(AbstractContainer):
 
-  def __init__(self, size: Tuple[int, int], screen, children: List[Tuple[Vector2, Component]]):
-    super().__init__(size, screen, [c[1] for c in children])
-    self._children = children
+  def __init__(self, size: Tuple[int, int], screen, positioned_children: List[Tuple[Vector2, Component]]):
+    super().__init__(size, screen, [c[1] for c in positioned_children])
+    self._positioned_children = positioned_children
 
   def set_pos(self, pos: Vector2):
     super().set_pos(pos)
-    for relative_pos, component in self._children:
+    for relative_pos, component in self._positioned_children:
       component.set_pos(pos + relative_pos)
 
 
