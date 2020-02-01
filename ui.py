@@ -50,7 +50,7 @@ class Component:
 
   def handle_mouse_click(self, mouse_pos: Tuple[int, int]):
     self._assert_initialized()
-    if self._rect.collidepoint(mouse_pos[0], mouse_pos[1]):
+    if self._is_visible and self._rect.collidepoint(mouse_pos[0], mouse_pos[1]):
       self._on_click(mouse_pos)
 
   def handle_mouse_motion(self, mouse_pos: Tuple[int, int]):

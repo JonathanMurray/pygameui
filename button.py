@@ -43,7 +43,7 @@ class Button(Component):
     self._cooldown = 150
 
   def handle_button_click(self, key):
-    if self._hotkey == key:
+    if self.is_visible() and self._hotkey == key:
       self._on_click(None)
 
 

@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import List, Tuple, Any, Optional
 
+import pygame
 from pygame.math import Vector2
 
 from ui import Component
@@ -130,3 +131,41 @@ class EvenSpacingContainer(AbstractContainer):
     for component in self._children:
       component.set_pos(pos + relative_pos)
       relative_pos += (component.size[0] + margin, 0)
+
+
+class ScrollContainer(AbstractContainer):
+  def __init__(self, height: Any, screen, children: List[Component], padding: int, margin: int, **kwargs):
+    container_width = max(c.size[0] for c in children) + padding * 2
+    super().__init__((container_width, height), screen, children, **kwargs)
+    sum_height = sum(c.size[1] for c in children) + padding * 2 + margin * (len(children) - 1)
+    self._max_scroll = sum_height - height
+    self._padding = padding
+    self._margin = margin
+    self._scroll_y = 0
+
+  def scroll(self, dy: int):
+    self._scroll_y = max(0, min(self._scroll_y + dy, self._max_scroll))
+    self.set_pos(self._rect.topleft)
+    self._update_children_visibility()
+    # render parts of elements at the edge
+    # add visual scrollbar that is rendered at right-hand side
+
+  def _update_children_visibility(self):
+    for component in self._children:
+      inside = self._rect.colliderect(component._rect)
+      component.set_visible(inside)
+
+  def set_pos(self, pos: Vector2):
+    super().set_pos(pos)
+    relative_pos = Vector2(self._padding, self._padding - self._scroll_y)
+    for component in self._children:
+      component.set_pos(pos + relative_pos)
+      relative_pos += (0, component.size[1] + self._margin)
+    self._update_children_visibility()
+
+  def handle_button_click(self, key):
+    super().handle_button_click(key)
+    if key == pygame.K_DOWN:
+      self.scroll(5)
+    elif key == pygame.K_UP:
+      self.scroll(-5)

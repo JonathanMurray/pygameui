@@ -8,7 +8,7 @@ from pygame.time import Clock, set_timer
 
 from button import button
 from checkbox import checkbox
-from containers import ListContainer, Orientation, AbsolutePosContainer
+from containers import ListContainer, Orientation, AbsolutePosContainer, ScrollContainer
 from ui import BackgroundGrid, Style, Text, Counter, FormattedText
 
 SCREEN_RESOLUTION = (800, 600)
@@ -50,15 +50,19 @@ def main():
     checkbox(font, screen, (200, 32), callback=lambda checked: debug_window.set_visible(checked), label="Show debug",
              checked=debug_window.is_visible()),
     checkbox(font, screen, (200, 32), callback=lambda checked: print("B: %s" % checked), label="B"),
+    checkbox(font, screen, (200, 32), callback=lambda checked: print("C: %s" % checked), label="C"),
+    checkbox(font, screen, (200, 32), callback=lambda checked: print("D: %s" % checked), label="D"),
+    checkbox(font, screen, (200, 32), callback=lambda checked: print("E: %s" % checked), label="E"),
+    checkbox(font, screen, (200, 32), callback=lambda checked: print("F: %s" % checked), label="F"),
   ]
   left_menu_bar = ListContainer(width="fit_contents", height="fill_parent", screen=screen, children=left_buttons,
                                 margin=5, padding=5,
                                 orientation=Orientation.VERTICAL,
                                 style=Style(background=Color(150, 150, 255), border_color=COLOR_WHITE))
-  right_menu_bar = ListContainer(width="fit_contents", height="fit_contents", screen=screen, children=right_buttons,
-                                 margin=5, padding=5,
-                                 orientation=Orientation.VERTICAL,
-                                 style=Style(background=Color(150, 210, 255)))
+  right_menu_bar = ScrollContainer(height=166, screen=screen, children=right_buttons,
+                                   margin=5, padding=5,
+                                   orientation=Orientation.VERTICAL,
+                                   style=Style(background=Color(150, 210, 255)))
 
   hud = ListContainer(width=800, height=200, screen=screen, children=[left_menu_bar, right_menu_bar, counter], margin=5,
                       padding=5, orientation=Orientation.HORIZONTAL,
