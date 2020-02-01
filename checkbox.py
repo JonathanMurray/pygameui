@@ -12,8 +12,8 @@ COLOR_WHITE = Color(255, 255, 255)
 
 
 class Checkbox(Component):
-  def __init__(self, size: Tuple[int, int], screen, label: Text, checked: bool = False, **kwargs):
-    super().__init__(size, screen, **kwargs)
+  def __init__(self, size: Tuple[int, int], label: Text, checked: bool = False, **kwargs):
+    super().__init__(size, **kwargs)
     self._callback: Callable[[bool], Any] = kwargs.get('callback')
     self._label = label
     self._style_on_click = kwargs.get('style_onclick')
@@ -55,11 +55,10 @@ class Checkbox(Component):
     self._cooldown = 150
 
 
-def checkbox(font, screen, size: Tuple[int, int], callback: Callable[[bool], Any], label: str, checked: bool = False):
+def checkbox(font, size: Tuple[int, int], callback: Callable[[bool], Any], label: str, checked: bool = False):
   return Checkbox(size=size,
-                  screen=screen,
                   callback=callback,
-                  label=Text(screen, font, COLOR_WHITE, label),
+                  label=Text(font, COLOR_WHITE, label),
                   checked=checked,
                   style=Style(background=Color(50, 50, 100), border_color=Color(150, 150, 150)),
                   style_hovered=Style(background=Color(80, 80, 120), border_color=Color(180, 180, 180)),

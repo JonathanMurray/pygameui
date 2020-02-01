@@ -8,17 +8,16 @@ from pygame.rect import Rect
 
 
 class BackgroundGrid:
-  def __init__(self, screen, screen_resolution, line_color: Color, cell_width):
-    self._screen = screen
+  def __init__(self, screen_resolution, line_color: Color, cell_width):
     self._screen_resolution = screen_resolution
     self._line_color = line_color
     self._cell_width = cell_width
 
-  def render(self):
+  def render(self, surface):
     for x in range(0, self._screen_resolution[0], self._cell_width):
-      pygame.draw.line(self._screen, self._line_color, (x, 0), (x, self._screen_resolution[1]))
+      pygame.draw.line(surface, self._line_color, (x, 0), (x, self._screen_resolution[1]))
     for y in range(0, self._screen_resolution[1], self._cell_width):
-      pygame.draw.line(self._screen, self._line_color, (0, y), (self._screen_resolution[0], y))
+      pygame.draw.line(surface, self._line_color, (0, y), (self._screen_resolution[0], y))
 
 
 class Style:
@@ -29,7 +28,7 @@ class Style:
 
 
 class Component:
-  def __init__(self, size: Tuple[int, int], screen, **kwargs):
+  def __init__(self, size: Tuple[int, int], **kwargs):
     self.size = size
     self._rect = None
     self._style = kwargs.get('style')
@@ -97,8 +96,8 @@ class Component:
 
 
 class Text(Component):
-  def __init__(self, screen, font: Font, color: Color, text: str, **kwargs):
-    super().__init__(font.size(text), screen, **kwargs)
+  def __init__(self, font: Font, color: Color, text: str, **kwargs):
+    super().__init__(font.size(text), **kwargs)
     self._font = font
     self._color = color
     self._rendered_text = self._font.render(text, True, color)
@@ -112,10 +111,10 @@ class Text(Component):
 
 
 class FormattedText(Component):
-  def __init__(self, screen, font: Font, color: Color, format_string: str, format_variable: Any, **kwargs):
+  def __init__(self, font: Font, color: Color, format_string: str, format_variable: Any, **kwargs):
     text = format_string % format_variable
     text_size = font.size(text)
-    super().__init__(text_size, screen, **kwargs)
+    super().__init__(text_size, **kwargs)
     self._format_string = format_string
     self._font = font
     self._color = color
@@ -131,8 +130,8 @@ class FormattedText(Component):
 
 
 class Counter(Component):
-  def __init__(self, size: Tuple[int, int], screen, formatted_text: FormattedText, **kwargs):
-    super().__init__(size, screen, **kwargs)
+  def __init__(self, size: Tuple[int, int], formatted_text: FormattedText, **kwargs):
+    super().__init__(size, **kwargs)
     self._text = formatted_text
     self._count = 0
     self._update_text()

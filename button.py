@@ -10,8 +10,8 @@ COLOR_WHITE = Color(255, 255, 255)
 
 
 class Button(Component):
-  def __init__(self, size: Tuple[int, int], screen, label: Text, hotkey: Optional[int] = None, **kwargs):
-    super().__init__(size, screen, **kwargs)
+  def __init__(self, size: Tuple[int, int], label: Text, hotkey: Optional[int] = None, **kwargs):
+    super().__init__(size, **kwargs)
     self._callback = kwargs.get('callback')
     self._label = label
     self._style_on_click = kwargs.get('style_onclick')
@@ -48,8 +48,8 @@ class Button(Component):
 
 
 class ColorToggler(Button):
-  def __init__(self, size: Tuple[int, int], screen, label: Text, colors: List[Color], **kwargs):
-    super().__init__(size, screen, label, **kwargs)
+  def __init__(self, size: Tuple[int, int], label: Text, colors: List[Color], **kwargs):
+    super().__init__(size, label, **kwargs)
     self._colors = colors
     self._index = 0
     self._background = self._colors[self._index]
@@ -59,11 +59,10 @@ class ColorToggler(Button):
     self._background = self._colors[self._index]
 
 
-def button(font, screen, size: Tuple[int, int], callback: Callable[[], Any], label: str, hotkey: Optional[int] = None):
+def button(font, size: Tuple[int, int], callback: Callable[[], Any], label: str, hotkey: Optional[int] = None):
   return Button(size=size,
-                screen=screen,
                 callback=callback,
-                label=Text(screen, font, COLOR_WHITE, label),
+                label=Text(font, COLOR_WHITE, label),
                 hotkey=hotkey,
                 style=Style(background=Color(50, 50, 100), border_color=Color(150, 150, 150)),
                 style_hovered=Style(background=Color(80, 80, 120), border_color=Color(180, 180, 180)),

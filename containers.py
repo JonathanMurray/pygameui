@@ -9,8 +9,8 @@ from ui import Component
 
 
 class AbstractContainer(Component):
-  def __init__(self, size: Tuple[int, int], screen, children: List[Component], **kwargs):
-    super().__init__(size, screen, **kwargs)
+  def __init__(self, size: Tuple[int, int], children: List[Component], **kwargs):
+    super().__init__(size, **kwargs)
     self._children = children
 
   def _render(self, surface):
@@ -41,8 +41,8 @@ class AbstractContainer(Component):
 
 class AbsolutePosContainer(AbstractContainer):
 
-  def __init__(self, size: Tuple[int, int], screen, positioned_children: List[Tuple[Vector2, Component]]):
-    super().__init__(size, screen, [c[1] for c in positioned_children])
+  def __init__(self, size: Tuple[int, int], positioned_children: List[Tuple[Vector2, Component]]):
+    super().__init__(size, [c[1] for c in positioned_children])
     self._positioned_children = positioned_children
 
   def set_pos(self, pos: Vector2):
@@ -57,9 +57,9 @@ class Orientation(Enum):
 
 
 class ListContainer(AbstractContainer):
-  def __init__(self, width: Any, height: Any, screen, children: List[Component], margin: Any, padding: int,
+  def __init__(self, width: Any, height: Any, children: List[Component], margin: Any, padding: int,
       orientation: Orientation, **kwargs):
-    super().__init__((width, height), screen, children, **kwargs)
+    super().__init__((width, height), children, **kwargs)
     self._margin = margin
     self._padding = padding
     if width == 'fit_contents':
@@ -117,8 +117,8 @@ class ListContainer(AbstractContainer):
 
 
 class EvenSpacingContainer(AbstractContainer):
-  def __init__(self, size: Tuple[int, int], screen, children: List[Component], padding: int, **kwargs):
-    super().__init__(size, screen, children, **kwargs)
+  def __init__(self, size: Tuple[int, int], children: List[Component], padding: int, **kwargs):
+    super().__init__(size, children, **kwargs)
     self._padding = padding
 
   def set_pos(self, pos: Vector2):
@@ -135,10 +135,10 @@ class EvenSpacingContainer(AbstractContainer):
 
 
 class ScrollContainer(AbstractContainer):
-  def __init__(self, height: Any, screen, children: List[Component], padding: int, margin: int, **kwargs):
+  def __init__(self, height: Any, children: List[Component], padding: int, margin: int, **kwargs):
     container_width = max(c.size[0] for c in children) + padding * 2
     size = (container_width, height)
-    super().__init__(size, screen, children, **kwargs)
+    super().__init__(size, children, **kwargs)
     sum_height = sum(c.size[1] for c in children) + padding * 2 + margin * (len(children) - 1)
     self._max_scroll = sum_height - height
     self._padding = padding

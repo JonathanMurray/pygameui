@@ -25,49 +25,49 @@ def main():
 
   font = Font('Arial Rounded Bold.ttf', 14)
   background_color = (0, 0, 0)
-  grid = BackgroundGrid(screen, SCREEN_RESOLUTION, Color(20, 20, 20), 32)
+  grid = BackgroundGrid(SCREEN_RESOLUTION, Color(20, 20, 20), 32)
 
-  fps_text = FormattedText(screen, font, COLOR_WHITE, "FPS: %i", 0)
+  fps_text = FormattedText(font, COLOR_WHITE, "FPS: %i", 0)
   debug_texts = [
     fps_text,
-    Text(screen, font, COLOR_WHITE, "debug: 2"),
-    Text(screen, font, COLOR_WHITE, "debug: 3"),
+    Text(font, COLOR_WHITE, "debug: 2"),
+    Text(font, COLOR_WHITE, "debug: 3"),
   ]
-  debug_window = ListContainer(width=200, height="fit_contents", screen=screen, children=debug_texts, margin=5,
+  debug_window = ListContainer(width=200, height="fit_contents", children=debug_texts, margin=5,
                                padding=5, orientation=Orientation.VERTICAL,
                                style=Style(border_color=COLOR_WHITE))
 
   left_buttons = [
-    button(font, screen, (200, 48), callback=lambda: print("hello"), label="click"),
-    button(font, screen, (200, 48), callback=lambda: print("hello"), label="click"),
-    button(font, screen, (200, 48), callback=lambda: print("hello"), label="click"),
+    button(font, (200, 48), callback=lambda: print("hello"), label="click"),
+    button(font, (200, 48), callback=lambda: print("hello"), label="click"),
+    button(font, (200, 48), callback=lambda: print("hello"), label="click"),
   ]
-  counter = Counter((50, 50), screen, FormattedText(screen, font, COLOR_WHITE, "%i", 0),
+  counter = Counter((50, 50), FormattedText(font, COLOR_WHITE, "%i", 0),
                     style=Style(background=Color(100, 100, 100)))
   right_buttons = [
-    button(font, screen, (200, 32), callback=lambda: counter.increment(), label="Increment (I)", hotkey=pygame.K_i),
-    button(font, screen, (200, 32), callback=lambda: counter.decrement(), label="Decrement (D)", hotkey=pygame.K_d),
-    checkbox(font, screen, (200, 32), callback=lambda checked: debug_window.set_visible(checked), label="Show debug",
+    button(font, (200, 32), callback=lambda: counter.increment(), label="Increment (I)", hotkey=pygame.K_i),
+    button(font, (200, 32), callback=lambda: counter.decrement(), label="Decrement (D)", hotkey=pygame.K_d),
+    checkbox(font, (200, 32), callback=lambda checked: debug_window.set_visible(checked), label="Show debug",
              checked=debug_window.is_visible()),
-    checkbox(font, screen, (200, 32), callback=lambda checked: print("B: %s" % checked), label="B"),
-    checkbox(font, screen, (200, 32), callback=lambda checked: print("C: %s" % checked), label="C"),
-    checkbox(font, screen, (200, 32), callback=lambda checked: print("D: %s" % checked), label="D"),
-    checkbox(font, screen, (200, 32), callback=lambda checked: print("E: %s" % checked), label="E"),
-    checkbox(font, screen, (200, 32), callback=lambda checked: print("F: %s" % checked), label="F"),
+    checkbox(font, (200, 32), callback=lambda checked: print("B: %s" % checked), label="B"),
+    checkbox(font, (200, 32), callback=lambda checked: print("C: %s" % checked), label="C"),
+    checkbox(font, (200, 32), callback=lambda checked: print("D: %s" % checked), label="D"),
+    checkbox(font, (200, 32), callback=lambda checked: print("E: %s" % checked), label="E"),
+    checkbox(font, (200, 32), callback=lambda checked: print("F: %s" % checked), label="F"),
   ]
-  left_menu_bar = ListContainer(width="fit_contents", height="fill_parent", screen=screen, children=left_buttons,
+  left_menu_bar = ListContainer(width="fit_contents", height="fill_parent", children=left_buttons,
                                 margin=5, padding=5,
                                 orientation=Orientation.VERTICAL,
                                 style=Style(background=Color(150, 150, 255), border_color=COLOR_WHITE))
-  right_menu_bar = ScrollContainer(height=166, screen=screen, children=right_buttons,
+  right_menu_bar = ScrollContainer(height=166, children=right_buttons,
                                    margin=5, padding=5,
                                    orientation=Orientation.VERTICAL,
                                    style=Style(background=Color(150, 210, 255)))
 
-  hud = ListContainer(width=800, height=200, screen=screen, children=[left_menu_bar, right_menu_bar, counter], margin=5,
+  hud = ListContainer(width=800, height=200, children=[left_menu_bar, right_menu_bar, counter], margin=5,
                       padding=5, orientation=Orientation.HORIZONTAL,
                       style=Style(border_color=COLOR_WHITE, background=Color(0, 0, 150)))
-  container = AbsolutePosContainer(SCREEN_RESOLUTION, screen, [(Vector2(5, 5), debug_window), (Vector2(0, 400), hud)])
+  container = AbsolutePosContainer(SCREEN_RESOLUTION, [(Vector2(5, 5), debug_window), (Vector2(0, 400), hud)])
   container.set_pos(Vector2(0, 0))
 
   while True:
@@ -86,7 +86,7 @@ def main():
     container.update(elapsed_time)
 
     screen.fill(background_color)
-    grid.render()
+    grid.render(screen)
     container.render(screen)
     pygame.display.flip()
 
