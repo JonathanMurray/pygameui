@@ -8,7 +8,7 @@ from pygame.time import Clock
 
 from buttons import button, checkbox
 from containers import ListContainer, Orientation, AbsolutePosContainer
-from ui import BackgroundGrid, Style, Text
+from ui import BackgroundGrid, Style, Text, Counter, FormattedText
 
 SCREEN_RESOLUTION = (800, 600)
 COLOR_WHITE = Color(255, 255, 255)
@@ -36,9 +36,11 @@ def main():
     button(font, screen, (200, 48), callback=lambda: print("hello"), label="click"),
     button(font, screen, (200, 48), callback=lambda: print("hello"), label="click"),
   ]
+  counter = Counter((50, 50), screen, FormattedText(screen, font, COLOR_WHITE, "%i", 0),
+                    style=Style(background=Color(100, 100, 100)))
   right_buttons = [
-    button(font, screen, (200, 32), callback=lambda: print("bye"), label="click"),
-    button(font, screen, (200, 32), callback=lambda: print("bye"), label="click"),
+    button(font, screen, (200, 32), callback=lambda: counter.increment(), label="Increment!"),
+    button(font, screen, (200, 32), callback=lambda: counter.decrement(), label="Decrement"),
     checkbox(font, screen, (200, 32), callback=lambda checked: debug_window.set_visible(checked), label="Show debug",
              checked=debug_window.is_visible()),
     checkbox(font, screen, (200, 32), callback=lambda checked: print("B: %s" % checked), label="B"),
@@ -52,7 +54,7 @@ def main():
                                  orientation=Orientation.VERTICAL,
                                  style=Style(background=Color(150, 210, 255)))
 
-  hud = ListContainer(width=800, height=200, screen=screen, children=[left_menu_bar, right_menu_bar], margin=5,
+  hud = ListContainer(width=800, height=200, screen=screen, children=[left_menu_bar, right_menu_bar, counter], margin=5,
                       padding=5, orientation=Orientation.HORIZONTAL,
                       style=Style(border_color=COLOR_WHITE, background=Color(0, 0, 150)))
   container = AbsolutePosContainer(SCREEN_RESOLUTION, screen, [(Vector2(5, 5), debug_window), (Vector2(0, 400), hud)])

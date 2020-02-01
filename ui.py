@@ -126,3 +126,36 @@ class FormattedText(Component):
 
   def _render(self):
     self._screen.blit(self._rendered_text, self._rect)
+
+
+class Counter(Component):
+  def __init__(self, size: Tuple[int, int], screen, formatted_text: FormattedText, **kwargs):
+    super().__init__(size, screen, **kwargs)
+    self._text = formatted_text
+    self._count = 0
+    self._update_text()
+
+  def set_pos(self, pos: Vector2):
+    super().set_pos(pos)
+    self._update_text_pos()
+
+  def _render(self):
+    self._text.render()
+
+  def increment(self):
+    self._count += 1
+    self._update_text()
+    self._update_text_pos()
+
+  def decrement(self):
+    self._count -= 1
+    self._update_text()
+    self._update_text_pos()
+
+  def _update_text(self):
+    self._text.format_text(self._count)
+
+  def _update_text_pos(self):
+    text_pos = Vector2(self._rect.centerx - self._text.size[0] / 2,
+                       self._rect.centery - self._text.size[1] / 2)
+    self._text.set_pos(text_pos)
