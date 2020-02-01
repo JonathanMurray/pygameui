@@ -1,4 +1,4 @@
-from typing import List, Tuple, Callable, Any, Text
+from typing import List, Tuple, Callable, Any, Text, Optional
 
 from pygame.color import Color
 from pygame.math import Vector2
@@ -37,7 +37,7 @@ class Checkbox(Component):
   def _render(self):
     self._label.render()
 
-  def _on_click(self, mouse_pos: Tuple[int, int]):
+  def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):
     self._checked = not self._checked
     self._update_text()
     if self._callback:
@@ -50,12 +50,13 @@ class Checkbox(Component):
 
 
 class Button(Component):
-  def __init__(self, size: Tuple[int, int], screen, label: Text, **kwargs):
+  def __init__(self, size: Tuple[int, int], screen, label: Text, hotkey: Optional[int] = None, **kwargs):
     super().__init__(size, screen, **kwargs)
     self._callback = kwargs.get('callback')
     self._label = label
     self._style_on_click = kwargs.get('style_onclick')
     self._cooldown = 0
+    self._hotkey = hotkey
 
   def update(self, elapsed_time: int):
     if self._cooldown > 0:
@@ -75,11 +76,15 @@ class Button(Component):
   def _render(self):
     self._label.render()
 
-  def _on_click(self, mouse_pos: Tuple[int, int]):
+  def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):
     if self._callback:
       self._callback()
     self._active_style = self._style_on_click
     self._cooldown = 150
+
+  def handle_button_click(self, key):
+    if self._hotkey == key:
+      self._on_click(None)
 
 
 class ColorToggler(Button):
@@ -89,16 +94,17 @@ class ColorToggler(Button):
     self._index = 0
     self._background = self._colors[self._index]
 
-  def _on_click(self, mouse_pos: Tuple[int, int]):
+  def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):
     self._index = (self._index + 1) % len(self._colors)
     self._background = self._colors[self._index]
 
 
-def button(font, screen, size: Tuple[int, int], callback: Callable[[], Any], label: str):
+def button(font, screen, size: Tuple[int, int], callback: Callable[[], Any], label: str, hotkey: Optional[int] = None):
   return Button(size=size,
                 screen=screen,
                 callback=callback,
                 label=Text(screen, font, COLOR_WHITE, label),
+                hotkey=hotkey,
                 style=Style(background=Color(50, 50, 100), border_color=Color(150, 150, 150)),
                 style_hovered=Style(background=Color(80, 80, 120), border_color=Color(180, 180, 180)),
                 style_onclick=Style(background=Color(80, 80, 120), border_color=Color(200, 255, 200),

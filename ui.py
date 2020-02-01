@@ -45,6 +45,9 @@ class Component:
   def set_pos(self, pos: Vector2):
     self._rect = Rect(pos, self.size)
 
+  def handle_button_click(self, key):
+    pass
+
   def handle_mouse_click(self, mouse_pos: Tuple[int, int]):
     self._assert_initialized()
     if self._rect.collidepoint(mouse_pos[0], mouse_pos[1]):
@@ -80,7 +83,7 @@ class Component:
   def _render(self):
     pass
 
-  def _on_click(self, mouse_pos: Tuple[int, int]):
+  def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):
     pass
 
   def _on_hover(self, mouse_pos: Tuple[int, int]):

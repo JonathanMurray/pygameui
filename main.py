@@ -44,8 +44,8 @@ def main():
   counter = Counter((50, 50), screen, FormattedText(screen, font, COLOR_WHITE, "%i", 0),
                     style=Style(background=Color(100, 100, 100)))
   right_buttons = [
-    button(font, screen, (200, 32), callback=lambda: counter.increment(), label="Increment!"),
-    button(font, screen, (200, 32), callback=lambda: counter.decrement(), label="Decrement"),
+    button(font, screen, (200, 32), callback=lambda: counter.increment(), label="Increment (I)", hotkey=pygame.K_i),
+    button(font, screen, (200, 32), callback=lambda: counter.decrement(), label="Decrement (D)", hotkey=pygame.K_d),
     checkbox(font, screen, (200, 32), callback=lambda checked: debug_window.set_visible(checked), label="Show debug",
              checked=debug_window.is_visible()),
     checkbox(font, screen, (200, 32), callback=lambda checked: print("B: %s" % checked), label="B"),
@@ -74,7 +74,8 @@ def main():
         container.handle_mouse_motion(pygame.mouse.get_pos())
       elif event.type == USEREVENT_EACH_SECOND:
         fps_text.format_text(int(clock.get_fps()))
-
+      elif event.type == pygame.KEYDOWN:
+        container.handle_button_click(event.key)
     elapsed_time = clock.tick()
 
     container.update(elapsed_time)

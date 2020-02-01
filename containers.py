@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Tuple, Any
+from typing import List, Tuple, Any, Optional
 
 from pygame.math import Vector2
 
@@ -15,7 +15,7 @@ class AbstractContainer(Component):
     for component in self._children:
       component.render()
 
-  def _on_click(self, mouse_pos: Tuple[int, int]):
+  def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):
     for component in self._children:
       component.handle_mouse_click(mouse_pos)
 
@@ -27,6 +27,10 @@ class AbstractContainer(Component):
     super().handle_mouse_motion(mouse_pos)
     for component in self._children:
       component.handle_mouse_motion(mouse_pos)
+
+  def handle_button_click(self, key):
+    for component in self._children:
+      component.handle_button_click(key)
 
   def _on_blur(self):
     for component in self._children:
