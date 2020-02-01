@@ -6,8 +6,9 @@ from pygame.font import Font
 from pygame.math import Vector2
 from pygame.time import Clock
 
+from buttons import button
 from containers import ListContainer, Orientation
-from ui import BackgroundGrid, Button, Text, Style
+from ui import BackgroundGrid, Style
 
 SCREEN_RESOLUTION = (800, 600)
 COLOR_WHITE = Color(255, 255, 255, 0)
@@ -60,15 +61,6 @@ def main():
     grid.render()
     container.render()
     pygame.display.flip()
-
-
-def button(font, screen, size, callback, text: str):
-  return Button(size=size, screen=screen, callback=callback,
-                text=Text(screen, font, COLOR_WHITE, text),
-                style=Style(background=Color(50, 50, 100, 0), border_color=Color(150, 150, 150, 0)),
-                style_hovered=Style(background=Color(80, 80, 120), border_color=Color(180, 180, 180, 0)),
-                style_onclick=Style(background=Color(80, 80, 120), border_color=Color(200, 255, 200, 0),
-                                    border_width=2))
 
 
 def handle_exit(event):
