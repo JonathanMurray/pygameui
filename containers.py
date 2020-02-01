@@ -13,13 +13,13 @@ class AbstractContainer(Component):
     super().__init__(size, **kwargs)
     self._children = children
 
-  def _render(self, surface):
+  def _render_contents(self, surface):
     for component in self._children:
       component.render(surface)
 
   def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):
     for component in self._children:
-      component.handle_mouse_click(mouse_pos)
+      component.handle_mouse_was_clicked(mouse_pos)
 
   def update(self, elapsed_time: int):
     for component in self._children:
@@ -30,9 +30,9 @@ class AbstractContainer(Component):
     for component in self._children:
       component.handle_mouse_motion(mouse_pos)
 
-  def handle_button_click(self, key):
+  def handle_key_was_pressed(self, key):
     for component in self._children:
-      component.handle_button_click(key)
+      component.handle_key_was_pressed(key)
 
   def _on_blur(self):
     for component in self._children:
@@ -151,7 +151,7 @@ class ScrollContainer(AbstractContainer):
     self._scroll_y = max(0, min(self._scroll_y + dy, self._max_scroll))
     self._update_children()
 
-  def _render(self, surface):
+  def _render_contents(self, surface):
     s = Surface(self.size, pygame.SRCALPHA)
     for component in self._children:
       component.render(s)
@@ -170,7 +170,7 @@ class ScrollContainer(AbstractContainer):
   def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):
     local_mouse_pos = (mouse_pos[0] - self._rect.x, mouse_pos[1] - self._rect.y)
     for component in self._children:
-      component.handle_mouse_click(local_mouse_pos)
+      component.handle_mouse_was_clicked(local_mouse_pos)
 
   def _update_children(self):
     pos = Vector2(self._padding, self._padding - self._scroll_y)
@@ -178,8 +178,8 @@ class ScrollContainer(AbstractContainer):
       component.set_pos(pos)
       pos += (0, component.size[1] + self._margin)
 
-  def handle_button_click(self, key):
-    super().handle_button_click(key)
+  def handle_key_was_pressed(self, key):
+    super().handle_key_was_pressed(key)
     if key == pygame.K_DOWN:
       self.scroll(5)
     elif key == pygame.K_UP:

@@ -43,10 +43,10 @@ class Component:
   def set_pos(self, pos: Vector2):
     self._rect = Rect(pos, self.size)
 
-  def handle_button_click(self, key):
+  def handle_key_was_pressed(self, key):
     pass
 
-  def handle_mouse_click(self, mouse_pos: Tuple[int, int]):
+  def handle_mouse_was_clicked(self, mouse_pos: Tuple[int, int]):
     self._assert_initialized()
     if self._is_visible and self._rect.collidepoint(mouse_pos[0], mouse_pos[1]):
       self._on_click(mouse_pos)
@@ -68,7 +68,7 @@ class Component:
     if self._is_visible:
       if self._active_style and self._active_style.background:
         pygame.draw.rect(surface, self._active_style.background, self._rect)
-      self._render(surface)
+      self._render_contents(surface)
       if self._active_style and self._active_style.border_color:
         pygame.draw.rect(surface, self._active_style.border_color, self._rect, self._active_style.border_width)
 
@@ -78,7 +78,7 @@ class Component:
   def is_visible(self) -> bool:
     return self._is_visible
 
-  def _render(self, surface):
+  def _render_contents(self, surface):
     pass
 
   def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):
@@ -106,7 +106,7 @@ class Text(Component):
     self.size = self._font.size(text)
     self._rendered_text = self._font.render(text, True, self._color)
 
-  def _render(self, surface):
+  def _render_contents(self, surface):
     surface.blit(self._rendered_text, self._rect)
 
 
@@ -125,7 +125,7 @@ class FormattedText(Component):
     self.size = self._font.size(text)
     self._rendered_text = self._font.render(text, True, self._color)
 
-  def _render(self, surface):
+  def _render_contents(self, surface):
     surface.blit(self._rendered_text, self._rect)
 
 
@@ -140,7 +140,7 @@ class Counter(Component):
     super().set_pos(pos)
     self._update_text_pos()
 
-  def _render(self, surface):
+  def _render_contents(self, surface):
     self._text.render(surface)
 
   def increment(self):

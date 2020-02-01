@@ -33,7 +33,7 @@ class Button(Component):
                        self._rect.centery - self._label.size[1] / 2)
     self._label.set_pos(text_pos)
 
-  def _render(self, surface):
+  def _render_contents(self, surface):
     self._label.render(surface)
 
   def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):
@@ -42,7 +42,7 @@ class Button(Component):
     self._active_style = self._style_on_click
     self._cooldown = 150
 
-  def handle_button_click(self, key):
+  def handle_key_was_pressed(self, key):
     if self.is_visible() and self._hotkey == key:
       self._on_click(None)
 

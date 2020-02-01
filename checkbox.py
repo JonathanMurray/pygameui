@@ -38,7 +38,7 @@ class Checkbox(Component):
     w = self._label._rect.h * 0.75
     self._box = Rect(self._label._rect.right + 10, self._label._rect.bottom - w - 1, w, w)
 
-  def _render(self, surface):
+  def _render_contents(self, surface):
     self._label.render(surface)
     pygame.draw.rect(surface, Color(100, 100, 100), self._box)
     pygame.draw.rect(surface, COLOR_WHITE, self._box, 1)

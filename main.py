@@ -74,13 +74,13 @@ def main():
     for event in pygame.event.get():
       handle_exit(event)
       if event.type == pygame.MOUSEBUTTONDOWN:
-        container.handle_mouse_click(pygame.mouse.get_pos())
+        container.handle_mouse_was_clicked(pygame.mouse.get_pos())
       elif event.type == pygame.MOUSEMOTION:
         container.handle_mouse_motion(pygame.mouse.get_pos())
       elif event.type == USEREVENT_EACH_SECOND:
         fps_text.format_text(int(clock.get_fps()))
       elif event.type == pygame.KEYDOWN:
-        container.handle_button_click(event.key)
+        container.handle_key_was_pressed(event.key)
     elapsed_time = clock.tick()
 
     container.update(elapsed_time)
