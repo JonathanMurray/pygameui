@@ -4,7 +4,7 @@ import pygame
 from pygame.color import Color
 from pygame.font import Font
 from pygame.math import Vector2
-from pygame.time import Clock
+from pygame.time import Clock, set_timer
 
 from buttons import button, checkbox
 from containers import ListContainer, Orientation, AbsolutePosContainer
@@ -13,17 +13,22 @@ from ui import BackgroundGrid, Style, Text, Counter, FormattedText
 SCREEN_RESOLUTION = (800, 600)
 COLOR_WHITE = Color(255, 255, 255)
 
+USEREVENT_EACH_SECOND = pygame.USEREVENT + 1
+
 
 def main():
   pygame.init()
   screen = pygame.display.set_mode(SCREEN_RESOLUTION)
   clock = Clock()
+  set_timer(USEREVENT_EACH_SECOND, 1000)
+
   font = Font('Arial Rounded Bold.ttf', 14)
   background_color = (0, 0, 0)
   grid = BackgroundGrid(screen, SCREEN_RESOLUTION, Color(20, 20, 20), 32)
 
+  fps_text = FormattedText(screen, font, COLOR_WHITE, "FPS: %i", 0)
   debug_texts = [
-    Text(screen, font, COLOR_WHITE, "debug: 1"),
+    fps_text,
     Text(screen, font, COLOR_WHITE, "debug: 2"),
     Text(screen, font, COLOR_WHITE, "debug: 3"),
   ]
@@ -67,6 +72,8 @@ def main():
         container.handle_mouse_click(pygame.mouse.get_pos())
       elif event.type == pygame.MOUSEMOTION:
         container.handle_mouse_motion(pygame.mouse.get_pos())
+      elif event.type == USEREVENT_EACH_SECOND:
+        fps_text.format_text(int(clock.get_fps()))
 
     elapsed_time = clock.tick()
 
