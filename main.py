@@ -6,7 +6,8 @@ from pygame.font import Font
 from pygame.math import Vector2
 from pygame.time import Clock, set_timer
 
-from buttons import button, checkbox
+from button import button
+from checkbox import checkbox
 from containers import ListContainer, Orientation, AbsolutePosContainer
 from ui import BackgroundGrid, Style, Text, Counter, FormattedText
 
