@@ -1,4 +1,4 @@
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Any
 
 import pygame
 from pygame.color import Color
@@ -20,9 +20,13 @@ class BackgroundGrid:
 
 
 class Style:
-  def __init__(self, background_color: Optional[Color] = None, border_color: Optional[Color] = None,
+  def __init__(self,
+      background_color: Optional[Color] = None,
+      background_surface: Optional[Any] = None,
+      border_color: Optional[Color] = None,
       border_width: int = 1):
     self.background_color = background_color
+    self.background_surface = background_surface
     self.border_color = border_color
     self.border_width = border_width
 
@@ -72,8 +76,11 @@ class Component:
   def render(self, surface):
     self._assert_initialized()
     if self._is_visible:
-      if self._active_style and self._active_style.background_color:
-        pygame.draw.rect(surface, self._active_style.background_color, self._rect)
+      if self._active_style:
+        if self._active_style.background_color:
+          pygame.draw.rect(surface, self._active_style.background_color, self._rect)
+        elif self._active_style.background_surface:
+          surface.blit(self._active_style.background_surface, self._rect)
       self._render_contents(surface)
       if self._active_style and self._active_style.border_color:
         pygame.draw.rect(surface, self._active_style.border_color, self._rect, self._active_style.border_width)

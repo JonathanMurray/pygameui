@@ -16,7 +16,11 @@ class Surface(Component):
 
 
 def image_surface(file_path: str, size: Tuple[int, int]) -> Surface:
+  image = load_and_scale_image(file_path, size)
+  return Surface(image, style=Style(border_color=Color(255, 255, 255)))
+
+
+def load_and_scale_image(file_path: str, size: Tuple[int, int]):
   original_image = pygame.image.load(file_path)
   original_image.convert()
-  scaled_image = pygame.transform.scale(original_image, size)
-  return Surface(scaled_image, style=Style(border_color=Color(255, 255, 255)))
+  return pygame.transform.scale(original_image, size)

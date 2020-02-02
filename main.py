@@ -6,11 +6,11 @@ from pygame.font import Font
 from pygame.math import Vector2
 from pygame.time import Clock, set_timer
 
-from button import button, HoldDownBehavior
+from button import button, HoldDownBehavior, icon
 from checkbox import checkbox
 from containers import ListContainer, Orientation, AbsolutePosContainer, ScrollContainer, GridContainer
 from counter import Counter
-from images import image_surface
+from images import image_surface, load_and_scale_image
 from text import FormattedText, StaticText, TextArea
 from ui import BackgroundGrid, Style
 
@@ -70,6 +70,8 @@ def main():
   text_field = TextArea(font, COLOR_WHITE, (100, 100), padding=5,
                         style=Style(border_color=COLOR_WHITE))
 
+  icon_background = load_and_scale_image('resources/stone_tile.png', (32, 32))
+
   grid_children = [
     number_button(font, text_field, "1", pygame.K_1),
     number_button(font, text_field, "2", pygame.K_2),
@@ -77,9 +79,9 @@ def main():
     number_button(font, text_field, "4", pygame.K_4),
     number_button(font, text_field, "5", pygame.K_5),
     number_button(font, text_field, "6", pygame.K_6),
-    number_button(font, text_field, "7", pygame.K_7),
-    number_button(font, text_field, "8", pygame.K_8),
-    number_button(font, text_field, "9", pygame.K_9),
+    icon(font, (32, 32), icon_background, "A", pygame.K_a),
+    icon(font, (32, 32), icon_background, "B", pygame.K_b),
+    icon(font, (32, 32), icon_background, "C", pygame.K_c),
     number_button(font, text_field, "0", pygame.K_0),
     backspace_button(font, text_field)
   ]

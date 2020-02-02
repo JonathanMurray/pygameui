@@ -140,3 +140,15 @@ def button(font, size: Tuple[int, int], callback: Callable[[], Any], label: str,
                 style_hovered=Style(background_color=Color(80, 80, 120), border_color=Color(180, 180, 180)),
                 style_onclick=Style(background_color=Color(80, 80, 120), border_color=Color(200, 255, 200),
                                     border_width=2))
+
+
+def icon(font, size: Tuple[int, int], background_surface, label: str, hotkey: Optional[int] = None):
+  return Button(size=size,
+                callback=lambda: print("icon clicked!"),
+                label=StaticText(font, COLOR_WHITE, label),
+                behavior=SingleClickBehavior(),
+                hotkey=hotkey,
+                style=Style(background_surface=background_surface, border_color=Color(150, 150, 150)),
+                style_hovered=Style(background_surface=background_surface, border_color=Color(180, 180, 180)),
+                style_onclick=Style(background_surface=background_surface, border_color=Color(200, 255, 200),
+                                    border_width=2))
