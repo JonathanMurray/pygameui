@@ -9,6 +9,7 @@ from pygame.time import Clock, set_timer
 from button import button
 from checkbox import checkbox
 from containers import ListContainer, Orientation, AbsolutePosContainer, ScrollContainer, GridContainer
+from text import TextField
 from ui import BackgroundGrid, Style, Text, Counter, FormattedText
 
 SCREEN_RESOLUTION = (800, 600)
@@ -64,22 +65,27 @@ def main():
                                    orientation=Orientation.VERTICAL,
                                    style=Style(background=Color(150, 210, 255), border_color=COLOR_WHITE))
 
+  text_field = TextField(font, (100, 24), padding=5, max_length=9,
+                         style=Style(border_color=COLOR_WHITE))
+
   grid_children = [
-    button(font, (32, 32), callback=lambda: print("grid"), label="1"),
-    button(font, (32, 32), callback=lambda: print("grid"), label="2"),
-    button(font, (32, 32), callback=lambda: print("grid"), label="3"),
-    button(font, (32, 32), callback=lambda: print("grid"), label="4"),
-    button(font, (32, 32), callback=lambda: print("grid"), label="5"),
-    button(font, (32, 32), callback=lambda: print("grid"), label="6"),
-    button(font, (32, 32), callback=lambda: print("grid"), label="7"),
-    button(font, (32, 32), callback=lambda: print("grid"), label="8"),
-    button(font, (32, 32), callback=lambda: print("grid"), label="9"),
-    button(font, (32, 32), callback=lambda: print("grid"), label="0"),
+    number_button(font, text_field, "1", pygame.K_1),
+    number_button(font, text_field, "2", pygame.K_2),
+    number_button(font, text_field, "3", pygame.K_3),
+    number_button(font, text_field, "4", pygame.K_4),
+    number_button(font, text_field, "5", pygame.K_5),
+    number_button(font, text_field, "6", pygame.K_6),
+    number_button(font, text_field, "7", pygame.K_7),
+    number_button(font, text_field, "8", pygame.K_8),
+    number_button(font, text_field, "9", pygame.K_9),
+    number_button(font, text_field, "0", pygame.K_0),
+    backspace_button(font, text_field)
   ]
   grid_container = GridContainer(children=grid_children, dimensions=(3, 4), padding=5, margin=2,
                                  style=Style(background=Color(150, 130, 100), border_color=COLOR_WHITE))
 
-  hud = ListContainer(width=800, height=200, children=[left_menu_bar, right_menu_bar, counter, grid_container],
+  hud = ListContainer(width=800, height=200,
+                      children=[left_menu_bar, right_menu_bar, counter, grid_container, text_field],
                       margin=5,
                       padding=5, orientation=Orientation.HORIZONTAL,
                       style=Style(border_color=COLOR_WHITE, background=Color(0, 0, 150)))
@@ -107,6 +113,14 @@ def main():
     grid.render(screen)
     container.render(screen)
     pygame.display.flip()
+
+
+def number_button(font, text_area: TextField, text: str, key):
+  return button(font, (32, 32), callback=lambda: text_area.append(text), label=text, hotkey=key)
+
+
+def backspace_button(font, text_area: TextField):
+  return button(font, (32, 32), callback=lambda: text_area.backspace(), label="<-", hotkey=pygame.K_BACKSPACE)
 
 
 def handle_exit(event):
