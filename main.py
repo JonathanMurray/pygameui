@@ -10,6 +10,7 @@ from button import button, HoldDownBehavior
 from checkbox import checkbox
 from containers import ListContainer, Orientation, AbsolutePosContainer, ScrollContainer, GridContainer
 from counter import Counter
+from images import image_surface
 from text import FormattedText, StaticText, TextArea
 from ui import BackgroundGrid, Style
 
@@ -85,8 +86,10 @@ def main():
   grid_container = GridContainer(children=grid_children, dimensions=(3, 4), padding=5, margin=2,
                                  style=Style(background=Color(150, 130, 100), border_color=COLOR_WHITE))
 
+  img = image_surface('resources/stone_tile.png', (100, 100))
+
   hud = ListContainer(width=800, height=200,
-                      children=[left_menu_bar, right_menu_bar, counter, grid_container, text_field],
+                      children=[right_menu_bar, counter, grid_container, text_field, img],
                       margin=5,
                       padding=5, orientation=Orientation.HORIZONTAL,
                       style=Style(border_color=COLOR_WHITE, background=Color(0, 0, 150)))
