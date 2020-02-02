@@ -62,7 +62,7 @@ def main():
   right_menu_bar = ScrollContainer(height=166, children=right_buttons,
                                    margin=5, padding=5,
                                    orientation=Orientation.VERTICAL,
-                                   style=Style(background=Color(150, 210, 255)))
+                                   style=Style(background=Color(150, 210, 255), border_color=COLOR_WHITE))
 
   hud = ListContainer(width=800, height=200, children=[left_menu_bar, right_menu_bar, counter], margin=5,
                       padding=5, orientation=Orientation.HORIZONTAL,
@@ -75,6 +75,8 @@ def main():
       handle_exit(event)
       if event.type == pygame.MOUSEBUTTONDOWN:
         container.handle_mouse_was_clicked(pygame.mouse.get_pos())
+      elif event.type == pygame.MOUSEBUTTONUP:
+        container.handle_mouse_was_released()
       elif event.type == pygame.MOUSEMOTION:
         container.handle_mouse_motion(pygame.mouse.get_pos())
       elif event.type == USEREVENT_EACH_SECOND:

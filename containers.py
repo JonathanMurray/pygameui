@@ -2,7 +2,9 @@ from enum import Enum
 from typing import List, Tuple, Any, Optional
 
 import pygame
+from pygame.color import Color
 from pygame.math import Vector2
+from pygame.rect import Rect
 from pygame.surface import Surface
 
 from ui import Component
@@ -37,6 +39,10 @@ class AbstractContainer(Component):
   def _on_blur(self):
     for component in self._children:
       component._on_blur()
+
+  def handle_mouse_was_released(self):
+    for component in self._children:
+      component.handle_mouse_was_released()
 
 
 class AbsolutePosContainer(AbstractContainer):
@@ -137,8 +143,14 @@ class EvenSpacingContainer(AbstractContainer):
 # NOTE: Scroll container sets "local" positions for its children, in contrast to other containers
 # The children are rendered on a separate surface and then blitted / clipped onto the screen
 class ScrollContainer(AbstractContainer):
+  SCROLLBAR_WIDTH = 15
+  SCROLLBAR_MARGIN = 5
+
   def __init__(self, height: Any, children: List[Component], padding: int, margin: int, **kwargs):
-    container_width = max(c.size[0] for c in children) + padding * 2
+    container_width = max(c.size[0] for c in children) \
+                      + padding * 2 \
+                      + ScrollContainer.SCROLLBAR_WIDTH \
+                      + ScrollContainer.SCROLLBAR_MARGIN
     size = (container_width, height)
     super().__init__(size, children, **kwargs)
     sum_height = sum(c.size[1] for c in children) + padding * 2 + margin * (len(children) - 1)
@@ -146,6 +158,10 @@ class ScrollContainer(AbstractContainer):
     self._padding = padding
     self._margin = margin
     self._scroll_y = 0
+    self._scrollbar = None
+    self._scrollbar_top = None
+    self._scrollbar_bottom = None
+    self._scrolling_velocity = 0
 
   def scroll(self, dy: int):
     self._scroll_y = max(0, min(self._scroll_y + dy, self._max_scroll))
@@ -156,10 +172,28 @@ class ScrollContainer(AbstractContainer):
     for component in self._children:
       component.render(s)
     surface.blit(s, self._rect.topleft)
+    pygame.draw.rect(surface, Color(150, 150, 150), self._scrollbar)
+    height = 10
+    up_arrow = [(self._scrollbar.centerx, self._scrollbar.top + 2),
+                (self._scrollbar.left + 1, self._scrollbar.top + 2 + height),
+                (self._scrollbar.right - 2, self._scrollbar.top + 2 + height)]
+    pygame.draw.aalines(surface, Color(255, 255, 255), True, up_arrow)
+    down_arrow = [(self._scrollbar.centerx, self._scrollbar.bottom - 2),
+                  (self._scrollbar.left + 1, self._scrollbar.bottom - 2 - height),
+                  (self._scrollbar.right - 2, self._scrollbar.bottom - 2 - height)]
+    pygame.draw.aalines(surface, Color(255, 255, 255), True, down_arrow)
 
   def set_pos(self, pos: Vector2):
     super().set_pos(pos)
     self._update_children()
+    self._scrollbar = Rect(
+        self._rect.right - ScrollContainer.SCROLLBAR_WIDTH - ScrollContainer.SCROLLBAR_MARGIN,
+        self._rect.top + ScrollContainer.SCROLLBAR_MARGIN,
+        ScrollContainer.SCROLLBAR_WIDTH,
+        self._rect.h - ScrollContainer.SCROLLBAR_MARGIN * 2)
+    self._scrollbar_top = Rect(self._scrollbar.x, self._scrollbar.y, self._scrollbar.w, self._scrollbar.h // 2)
+    self._scrollbar_bottom = Rect(self._scrollbar.x, self._scrollbar.y + self._scrollbar.h // 2, self._scrollbar.w,
+                                  self._scrollbar.h // 2)
 
   def handle_mouse_motion(self, mouse_pos: Tuple[int, int]):
     super().handle_mouse_motion(mouse_pos)
@@ -169,8 +203,16 @@ class ScrollContainer(AbstractContainer):
 
   def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):
     local_mouse_pos = (mouse_pos[0] - self._rect.x, mouse_pos[1] - self._rect.y)
+    scroll_amount = 3
+    if self._scrollbar_top.collidepoint(mouse_pos):
+      self._scrolling_velocity = -scroll_amount
+    if self._scrollbar_bottom.collidepoint(mouse_pos):
+      self._scrolling_velocity = scroll_amount
     for component in self._children:
       component.handle_mouse_was_clicked(local_mouse_pos)
+
+  def handle_mouse_was_released(self):
+    self._scrolling_velocity = 0
 
   def _update_children(self):
     pos = Vector2(self._padding, self._padding - self._scroll_y)
@@ -178,9 +220,6 @@ class ScrollContainer(AbstractContainer):
       component.set_pos(pos)
       pos += (0, component.size[1] + self._margin)
 
-  def handle_key_was_pressed(self, key):
-    super().handle_key_was_pressed(key)
-    if key == pygame.K_DOWN:
-      self.scroll(5)
-    elif key == pygame.K_UP:
-      self.scroll(-5)
+  def update(self, elapsed_time: int):
+    super().update(elapsed_time)
+    self.scroll(self._scrolling_velocity)

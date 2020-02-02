@@ -51,6 +51,9 @@ class Component:
     if self._is_visible and self._rect.collidepoint(mouse_pos[0], mouse_pos[1]):
       self._on_click(mouse_pos)
 
+  def handle_mouse_was_released(self):
+    pass
+
   def handle_mouse_motion(self, mouse_pos: Tuple[int, int]):
     self._assert_initialized()
     hover = self._rect.collidepoint(mouse_pos[0], mouse_pos[1])
