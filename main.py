@@ -26,7 +26,7 @@ def main():
   clock = Clock()
   set_timer(USEREVENT_EACH_SECOND, 1000)
 
-  font = Font('Arial Rounded Bold.ttf', 14)
+  font = Font('resources/Arial Rounded Bold.ttf', 14)
   background_color = (0, 0, 0)
   grid = BackgroundGrid(SCREEN_RESOLUTION, Color(20, 20, 20), 32)
 
