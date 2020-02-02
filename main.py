@@ -10,7 +10,7 @@ from button import button, HoldDownBehavior
 from checkbox import checkbox
 from containers import ListContainer, Orientation, AbsolutePosContainer, ScrollContainer, GridContainer
 from counter import Counter
-from text import EditableText, FormattedText, StaticText, TextArea
+from text import FormattedText, StaticText, TextArea
 from ui import BackgroundGrid, Style
 
 SCREEN_RESOLUTION = (800, 600)
@@ -118,12 +118,12 @@ def main():
     pygame.display.flip()
 
 
-def number_button(font, text_area: EditableText, text: str, key):
+def number_button(font, text_area: TextArea, text: str, key):
   return button(font, (32, 32), callback=lambda: text_area.append(text), label=text, hotkey=key,
                 hold=HoldDownBehavior(400, 60))
 
 
-def backspace_button(font, text_area: EditableText):
+def backspace_button(font, text_area: TextArea):
   return button(font, (32, 32), callback=lambda: text_area.backspace(), label="<-", hotkey=pygame.K_BACKSPACE,
                 hold=HoldDownBehavior(400, 60))
 
