@@ -223,3 +223,25 @@ class ScrollContainer(AbstractContainer):
   def update(self, elapsed_time: int):
     super().update(elapsed_time)
     self.scroll(self._scrolling_velocity)
+
+
+class GridContainer(AbstractContainer):
+  def __init__(self, children: List[Component], dimensions: Tuple[int, int], padding: int, margin: int, **kwargs):
+    self._cell_size = (max(c.size[0] for c in children), max(c.size[1] for c in children))
+    size = (dimensions[0] * self._cell_size[0] + 2 * padding + (dimensions[0] - 1) * margin,
+            dimensions[1] * self._cell_size[1] + 2 * padding + (dimensions[1] - 1) * margin)
+    super().__init__(size, children, **kwargs)
+    self._dimensions = dimensions
+    self._padding = padding
+    self._margin = margin
+
+  def set_pos(self, pos: Vector2):
+    super().set_pos(pos)
+    relative_pos = (self._padding, self._padding)
+    num_cols = self._dimensions[0]
+    for i, component in enumerate(self._children):
+      component.set_pos(pos + relative_pos)
+      if i % num_cols == num_cols - 1:
+        relative_pos = (self._padding, relative_pos[1] + self._cell_size[1] + self._margin)
+      else:
+        relative_pos = (relative_pos[0] + self._cell_size[0] + self._margin, relative_pos[1])

@@ -8,7 +8,7 @@ from pygame.time import Clock, set_timer
 
 from button import button
 from checkbox import checkbox
-from containers import ListContainer, Orientation, AbsolutePosContainer, ScrollContainer
+from containers import ListContainer, Orientation, AbsolutePosContainer, ScrollContainer, GridContainer
 from ui import BackgroundGrid, Style, Text, Counter, FormattedText
 
 SCREEN_RESOLUTION = (800, 600)
@@ -64,7 +64,23 @@ def main():
                                    orientation=Orientation.VERTICAL,
                                    style=Style(background=Color(150, 210, 255), border_color=COLOR_WHITE))
 
-  hud = ListContainer(width=800, height=200, children=[left_menu_bar, right_menu_bar, counter], margin=5,
+  grid_children = [
+    button(font, (32, 32), callback=lambda: print("grid"), label="1"),
+    button(font, (32, 32), callback=lambda: print("grid"), label="2"),
+    button(font, (32, 32), callback=lambda: print("grid"), label="3"),
+    button(font, (32, 32), callback=lambda: print("grid"), label="4"),
+    button(font, (32, 32), callback=lambda: print("grid"), label="5"),
+    button(font, (32, 32), callback=lambda: print("grid"), label="6"),
+    button(font, (32, 32), callback=lambda: print("grid"), label="7"),
+    button(font, (32, 32), callback=lambda: print("grid"), label="8"),
+    button(font, (32, 32), callback=lambda: print("grid"), label="9"),
+    button(font, (32, 32), callback=lambda: print("grid"), label="0"),
+  ]
+  grid_container = GridContainer(children=grid_children, dimensions=(3, 4), padding=5, margin=2,
+                                 style=Style(background=Color(150, 130, 100), border_color=COLOR_WHITE))
+
+  hud = ListContainer(width=800, height=200, children=[left_menu_bar, right_menu_bar, counter, grid_container],
+                      margin=5,
                       padding=5, orientation=Orientation.HORIZONTAL,
                       style=Style(border_color=COLOR_WHITE, background=Color(0, 0, 150)))
   container = AbsolutePosContainer(SCREEN_RESOLUTION, [(Vector2(5, 5), debug_window), (Vector2(0, 400), hud)])
