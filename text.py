@@ -1,4 +1,4 @@
-from typing import Tuple, Any
+from typing import Tuple, Any, Optional
 
 from pygame.color import Color
 from pygame.font import Font
@@ -67,19 +67,43 @@ class EditableText(Component):
     self._text.set_text(self._contents)
 
 
+class BlinkingCursor:
+  def __init__(self, blink_interval: int):
+    self._visible = False
+    self._cooldown = 0
+    self._blink_interval = blink_interval
+
+  def update(self, elapsed_time: int):
+    self._cooldown -= elapsed_time
+    if self._cooldown < 0:
+      self._cooldown += self._blink_interval
+      self._visible = not self._visible
+      return True
+
+  def is_visible(self):
+    return self._visible
+
+
 class TextArea(Component):
-  def __init__(self, font, color: Color, size: Tuple[int, int], padding: int, **kwargs):
+  def __init__(self, font, color: Color, size: Tuple[int, int], padding: int,
+      blinking_cursor: Optional[BlinkingCursor] = None, **kwargs):
     super().__init__(size, **kwargs)
     self._text = ""
     self._padding = padding
     self._font = font
     self._color = color
+    self._blinking_cursor = blinking_cursor
     self._line_surfaces = []
     self._update_text()
+
+  def update(self, elapsed_time: int):
+    if self._blinking_cursor and self._blinking_cursor.update(elapsed_time):
+      self._update_text()
 
   def _update_text(self):
     self._line_surfaces = []
     start_line = 0
+    final_line = ""
     for i in range(len(self._text)):
       window = self._text[start_line:i + 1]
       rendered_width = self._font.size(window)[0]
@@ -89,7 +113,11 @@ class TextArea(Component):
         start_line = i
       if i == len(self._text) - 1:
         final_line = self._text[start_line:i + 1]
-        self._line_surfaces.append(self._render_line(final_line))
+    if self._blinking_cursor and self._blinking_cursor.is_visible():
+      line_trailer = "_"
+    else:
+      line_trailer = ""
+    self._line_surfaces.append(self._render_line(final_line + line_trailer))
 
   def _render_line(self, line: str):
     return self._font.render(line, True, self._color)

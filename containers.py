@@ -135,9 +135,10 @@ class EvenSpacingContainer(AbstractContainer):
     super().set_pos(pos)
     width_sum = sum([component.size[0] for component in self._children])
     if len(self._children) < 2:
-      margin = 0
-    else:
-      margin = (self.size[0] - width_sum - self._padding * 2) / (len(self._children) - 1)
+      component = self._children[0]
+      component.set_pos(Vector2(self._rect.centerx - component.size[0] // 2, pos[1] + self._padding))
+      return
+    margin = (self.size[0] - width_sum - self._padding * 2) / (len(self._children) - 1)
     relative_pos = Vector2(self._padding, self._padding)
     for component in self._children:
       component.set_pos(pos + relative_pos)
