@@ -6,7 +6,7 @@ from pygame.font import Font
 from pygame.math import Vector2
 from pygame.time import Clock, set_timer
 
-from button import button
+from button import button, ButtonHold
 from checkbox import checkbox
 from containers import ListContainer, Orientation, AbsolutePosContainer, ScrollContainer, GridContainer
 from counter import Counter
@@ -106,6 +106,8 @@ def main():
         fps_text.format_text(int(clock.get_fps()))
       elif event.type == pygame.KEYDOWN:
         container.handle_key_was_pressed(event.key)
+      elif event.type == pygame.KEYUP:
+        container.handle_key_was_released(event.key)
     elapsed_time = clock.tick()
 
     container.update(elapsed_time)
@@ -117,13 +119,13 @@ def main():
 
 
 def number_button(font, text_area: EditableText, text: str, key):
-  # TODO handle holding down hotkey
-  return button(font, (32, 32), callback=lambda: text_area.append(text), label=text, hotkey=key)
+  return button(font, (32, 32), callback=lambda: text_area.append(text), label=text, hotkey=key,
+                hold=ButtonHold(400, 60))
 
 
 def backspace_button(font, text_area: EditableText):
-  # TODO handle holding down hotkey
-  return button(font, (32, 32), callback=lambda: text_area.backspace(), label="<-", hotkey=pygame.K_BACKSPACE)
+  return button(font, (32, 32), callback=lambda: text_area.backspace(), label="<-", hotkey=pygame.K_BACKSPACE,
+                hold=ButtonHold(400, 60))
 
 
 def handle_exit(event):

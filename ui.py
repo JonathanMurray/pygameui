@@ -45,6 +45,9 @@ class Component:
   def handle_key_was_pressed(self, key):
     pass
 
+  def handle_key_was_released(self, key):
+    pass
+
   def handle_mouse_was_clicked(self, mouse_pos: Tuple[int, int]):
     self._assert_initialized()
     if self._is_visible and self._rect.collidepoint(mouse_pos[0], mouse_pos[1]):

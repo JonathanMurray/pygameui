@@ -36,6 +36,10 @@ class AbstractContainer(Component):
     for component in self._children:
       component.handle_key_was_pressed(key)
 
+  def handle_key_was_released(self, key):
+    for component in self._children:
+      component.handle_key_was_released(key)
+
   def _on_blur(self):
     for component in self._children:
       component._on_blur()
@@ -212,6 +216,7 @@ class ScrollContainer(AbstractContainer):
       component.handle_mouse_was_clicked(local_mouse_pos)
 
   def handle_mouse_was_released(self):
+    super().handle_mouse_was_released()
     self._scrolling_velocity = 0
 
   def _update_children(self):
