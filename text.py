@@ -105,6 +105,10 @@ class TextArea(Component):
     start_line = 0
     final_line = ""
     for i in range(len(self._text)):
+      if self._text[i] == '\n':
+        line = self._text[start_line:i]
+        self._line_surfaces.append(self._render_line(line))
+        start_line = i + 1
       window = self._text[start_line:i + 1]
       rendered_width = self._font.size(window)[0]
       if rendered_width > self.size[0] - self._padding * 2:

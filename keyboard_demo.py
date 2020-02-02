@@ -57,7 +57,7 @@ def main():
     keyboard_button(font, terminal, pygame.K_j),
     keyboard_button(font, terminal, pygame.K_k),
     keyboard_button(font, terminal, pygame.K_l),
-    blank_button(font),
+    return_button(font, terminal),
     blank_button(font),
     keyboard_button(font, terminal, pygame.K_z),
     keyboard_button(font, terminal, pygame.K_x),
@@ -112,6 +112,11 @@ def blank_button(font):
 
 def space_button(font, text_area: TextArea):
   return button(font, BUTTON_SIZE, callback=lambda: text_area.append(" "), label="Space", hotkey=pygame.K_SPACE,
+                hold=button_behavior())
+
+
+def return_button(font, text_area: TextArea):
+  return button(font, BUTTON_SIZE, callback=lambda: text_area.append("\n"), label="RET", hotkey=pygame.K_RETURN,
                 hold=button_behavior())
 
 
