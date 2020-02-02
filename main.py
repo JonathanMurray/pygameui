@@ -9,8 +9,9 @@ from pygame.time import Clock, set_timer
 from button import button
 from checkbox import checkbox
 from containers import ListContainer, Orientation, AbsolutePosContainer, ScrollContainer, GridContainer
-from text import TextField
-from ui import BackgroundGrid, Style, Text, Counter, FormattedText
+from counter import Counter
+from text import EditableText, FormattedText, StaticText
+from ui import BackgroundGrid, Style
 
 SCREEN_RESOLUTION = (800, 600)
 COLOR_WHITE = Color(255, 255, 255)
@@ -31,8 +32,8 @@ def main():
   fps_text = FormattedText(font, COLOR_WHITE, "FPS: %i", 0)
   debug_texts = [
     fps_text,
-    Text(font, COLOR_WHITE, "debug: 2"),
-    Text(font, COLOR_WHITE, "debug: 3"),
+    StaticText(font, COLOR_WHITE, "debug: 2"),
+    StaticText(font, COLOR_WHITE, "debug: 3"),
   ]
   debug_window = ListContainer(width=200, height="fit_contents", children=debug_texts, margin=5,
                                padding=5, orientation=Orientation.VERTICAL,
@@ -65,8 +66,8 @@ def main():
                                    orientation=Orientation.VERTICAL,
                                    style=Style(background=Color(150, 210, 255), border_color=COLOR_WHITE))
 
-  text_field = TextField(font, (100, 24), padding=5, max_length=9,
-                         style=Style(border_color=COLOR_WHITE))
+  text_field = EditableText(font, (100, 24), padding=5, max_length=9,
+                            style=Style(border_color=COLOR_WHITE))
 
   grid_children = [
     number_button(font, text_field, "1", pygame.K_1),
@@ -115,11 +116,11 @@ def main():
     pygame.display.flip()
 
 
-def number_button(font, text_area: TextField, text: str, key):
+def number_button(font, text_area: EditableText, text: str, key):
   return button(font, (32, 32), callback=lambda: text_area.append(text), label=text, hotkey=key)
 
 
-def backspace_button(font, text_area: TextField):
+def backspace_button(font, text_area: EditableText):
   return button(font, (32, 32), callback=lambda: text_area.backspace(), label="<-", hotkey=pygame.K_BACKSPACE)
 
 

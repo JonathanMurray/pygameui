@@ -1,16 +1,17 @@
-from typing import List, Tuple, Callable, Any, Text, Optional
+from typing import List, Tuple, Callable, Any, Optional
 
 from pygame.color import Color
 from pygame.math import Vector2
 
+from text import StaticText
 from ui import Component
-from ui import Text, Style
+from ui import Style
 
 COLOR_WHITE = Color(255, 255, 255)
 
 
 class Button(Component):
-  def __init__(self, size: Tuple[int, int], label: Text, hotkey: Optional[int] = None, **kwargs):
+  def __init__(self, size: Tuple[int, int], label: StaticText, hotkey: Optional[int] = None, **kwargs):
     super().__init__(size, **kwargs)
     self._callback = kwargs.get('callback')
     self._label = label
@@ -48,7 +49,7 @@ class Button(Component):
 
 
 class ColorToggler(Button):
-  def __init__(self, size: Tuple[int, int], label: Text, colors: List[Color], **kwargs):
+  def __init__(self, size: Tuple[int, int], label: StaticText, colors: List[Color], **kwargs):
     super().__init__(size, label, **kwargs)
     self._colors = colors
     self._index = 0
@@ -62,7 +63,7 @@ class ColorToggler(Button):
 def button(font, size: Tuple[int, int], callback: Callable[[], Any], label: str, hotkey: Optional[int] = None):
   return Button(size=size,
                 callback=callback,
-                label=Text(font, COLOR_WHITE, label),
+                label=StaticText(font, COLOR_WHITE, label),
                 hotkey=hotkey,
                 style=Style(background=Color(50, 50, 100), border_color=Color(150, 150, 150)),
                 style_hovered=Style(background=Color(80, 80, 120), border_color=Color(180, 180, 180)),

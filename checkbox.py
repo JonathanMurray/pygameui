@@ -5,14 +5,15 @@ from pygame.color import Color
 from pygame.math import Vector2
 from pygame.rect import Rect
 
-from ui import Component, Text
+from text import StaticText
+from ui import Component
 from ui import Style
 
 COLOR_WHITE = Color(255, 255, 255)
 
 
 class Checkbox(Component):
-  def __init__(self, size: Tuple[int, int], label: Text, checked: bool = False, **kwargs):
+  def __init__(self, size: Tuple[int, int], label: StaticText, checked: bool = False, **kwargs):
     super().__init__(size, **kwargs)
     self._callback: Callable[[bool], Any] = kwargs.get('callback')
     self._label = label
@@ -58,7 +59,7 @@ class Checkbox(Component):
 def checkbox(font, size: Tuple[int, int], callback: Callable[[bool], Any], label: str, checked: bool = False):
   return Checkbox(size=size,
                   callback=callback,
-                  label=Text(font, COLOR_WHITE, label),
+                  label=StaticText(font, COLOR_WHITE, label),
                   checked=checked,
                   style=Style(background=Color(50, 50, 100), border_color=Color(150, 150, 150)),
                   style_hovered=Style(background=Color(80, 80, 120), border_color=Color(180, 180, 180)),

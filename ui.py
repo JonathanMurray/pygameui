@@ -1,8 +1,7 @@
-from typing import Tuple, Optional, Any
+from typing import Tuple, Optional
 
 import pygame
 from pygame.color import Color
-from pygame.font import Font
 from pygame.math import Vector2
 from pygame.rect import Rect
 
@@ -98,70 +97,3 @@ class Component:
   def _assert_initialized(self):
     if self._rect is None:
       raise Exception("You must set the position of this component before interacting with it!")
-
-
-class Text(Component):
-  def __init__(self, font: Font, color: Color, text: str, **kwargs):
-    super().__init__(font.size(text), **kwargs)
-    self._font = font
-    self._color = color
-    self._rendered_text = self._font.render(text, True, color)
-
-  def set_text(self, text: str):
-    self.size = self._font.size(text)
-    self._rendered_text = self._font.render(text, True, self._color)
-
-  def _render_contents(self, surface):
-    surface.blit(self._rendered_text, self._rect)
-
-
-class FormattedText(Component):
-  def __init__(self, font: Font, color: Color, format_string: str, format_variable: Any, **kwargs):
-    text = format_string % format_variable
-    text_size = font.size(text)
-    super().__init__(text_size, **kwargs)
-    self._format_string = format_string
-    self._font = font
-    self._color = color
-    self._rendered_text = self._font.render(text, True, color)
-
-  def format_text(self, variable: Any):
-    text = self._format_string % variable
-    self.size = self._font.size(text)
-    self._rendered_text = self._font.render(text, True, self._color)
-
-  def _render_contents(self, surface):
-    surface.blit(self._rendered_text, self._rect)
-
-
-class Counter(Component):
-  def __init__(self, size: Tuple[int, int], formatted_text: FormattedText, **kwargs):
-    super().__init__(size, **kwargs)
-    self._text = formatted_text
-    self._count = 0
-    self._update_text()
-
-  def set_pos(self, pos: Vector2):
-    super().set_pos(pos)
-    self._update_text_pos()
-
-  def _render_contents(self, surface):
-    self._text.render(surface)
-
-  def increment(self):
-    self._count += 1
-    self._update_text()
-    self._update_text_pos()
-
-  def decrement(self):
-    self._count -= 1
-    self._update_text()
-    self._update_text_pos()
-
-  def _update_text(self):
-    self._text.format_text(self._count)
-
-  def _update_text_pos(self):
-    text_pos = Vector2(self._rect.centerx - self._text.size[0] / 2,
-                       self._rect.centery - self._text.size[1] / 2)
-    self._text.set_pos(text_pos)
