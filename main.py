@@ -46,7 +46,7 @@ def main():
     button(font, (200, 48), callback=lambda: print("hello"), label="click"),
   ]
   counter = Counter((50, 50), FormattedText(font, COLOR_WHITE, "%i", 0),
-                    style=Style(background=Color(100, 100, 100)))
+                    style=Style(background_color=Color(100, 100, 100)))
   right_buttons = [
     button(font, (200, 32), callback=lambda: counter.increment(), label="Increment (I)", hotkey=pygame.K_i),
     button(font, (200, 32), callback=lambda: counter.decrement(), label="Decrement (D)", hotkey=pygame.K_d),
@@ -61,11 +61,11 @@ def main():
   left_menu_bar = ListContainer(width="fit_contents", height="fill_parent", children=left_buttons,
                                 margin=5, padding=5,
                                 orientation=Orientation.VERTICAL,
-                                style=Style(background=Color(150, 150, 255), border_color=COLOR_WHITE))
+                                style=Style(background_color=Color(150, 150, 255), border_color=COLOR_WHITE))
   right_menu_bar = ScrollContainer(height=166, children=right_buttons,
                                    margin=5, padding=5,
                                    orientation=Orientation.VERTICAL,
-                                   style=Style(background=Color(150, 210, 255), border_color=COLOR_WHITE))
+                                   style=Style(background_color=Color(150, 210, 255), border_color=COLOR_WHITE))
 
   text_field = TextArea(font, COLOR_WHITE, (100, 100), padding=5,
                         style=Style(border_color=COLOR_WHITE))
@@ -84,7 +84,7 @@ def main():
     backspace_button(font, text_field)
   ]
   grid_container = GridContainer(children=grid_children, dimensions=(3, 4), padding=5, margin=2,
-                                 style=Style(background=Color(150, 130, 100), border_color=COLOR_WHITE))
+                                 style=Style(background_color=Color(150, 130, 100), border_color=COLOR_WHITE))
 
   img = image_surface('resources/stone_tile.png', (100, 100))
 
@@ -92,7 +92,7 @@ def main():
                       children=[right_menu_bar, counter, grid_container, text_field, img],
                       margin=5,
                       padding=5, orientation=Orientation.HORIZONTAL,
-                      style=Style(border_color=COLOR_WHITE, background=Color(0, 0, 150)))
+                      style=Style(border_color=COLOR_WHITE, background_color=Color(0, 0, 150)))
   container = AbsolutePosContainer(SCREEN_RESOLUTION, [(Vector2(5, 5), debug_window), (Vector2(0, 400), hud)])
   container.set_pos(Vector2(0, 0))
 

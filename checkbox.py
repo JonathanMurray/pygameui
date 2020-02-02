@@ -17,7 +17,7 @@ class Checkbox(Component):
     super().__init__(size, **kwargs)
     self._callback: Callable[[bool], Any] = kwargs.get('callback')
     self._label = label
-    self._style_on_click = kwargs.get('style_onclick')
+    self._style_on_click:Style = kwargs.get('style_onclick')
     self._cooldown = 0
     self._checked = checked
     self._box = None
@@ -61,7 +61,7 @@ def checkbox(font, size: Tuple[int, int], callback: Callable[[bool], Any], label
                   callback=callback,
                   label=StaticText(font, COLOR_WHITE, label),
                   checked=checked,
-                  style=Style(background=Color(50, 50, 100), border_color=Color(150, 150, 150)),
-                  style_hovered=Style(background=Color(80, 80, 120), border_color=Color(180, 180, 180)),
-                  style_onclick=Style(background=Color(80, 80, 120), border_color=Color(200, 255, 200),
+                  style=Style(background_color=Color(50, 50, 100), border_color=Color(150, 150, 150)),
+                  style_hovered=Style(background_color=Color(80, 80, 120), border_color=Color(180, 180, 180)),
+                  style_onclick=Style(background_color=Color(80, 80, 120), border_color=Color(200, 255, 200),
                                       border_width=2))

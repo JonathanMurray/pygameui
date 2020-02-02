@@ -20,8 +20,9 @@ class BackgroundGrid:
 
 
 class Style:
-  def __init__(self, background: Optional[Color] = None, border_color: Optional[Color] = None, border_width: int = 1):
-    self.background = background
+  def __init__(self, background_color: Optional[Color] = None, border_color: Optional[Color] = None,
+      border_width: int = 1):
+    self.background_color = background_color
     self.border_color = border_color
     self.border_width = border_width
 
@@ -30,10 +31,10 @@ class Component:
   def __init__(self, size: Tuple[int, int], **kwargs):
     self.size = size
     self._rect = None
-    self._style = kwargs.get('style')
-    self._style_hovered = kwargs.get('style_hovered')
+    self._style: Style = kwargs.get('style')
+    self._style_hovered: Style = kwargs.get('style_hovered')
     self._is_hovered = False
-    self._active_style = self._style
+    self._active_style: Style = self._style
     self._is_visible = True
 
   def update(self, elapsed_time: int):
@@ -71,8 +72,8 @@ class Component:
   def render(self, surface):
     self._assert_initialized()
     if self._is_visible:
-      if self._active_style and self._active_style.background:
-        pygame.draw.rect(surface, self._active_style.background, self._rect)
+      if self._active_style and self._active_style.background_color:
+        pygame.draw.rect(surface, self._active_style.background_color, self._rect)
       self._render_contents(surface)
       if self._active_style and self._active_style.border_color:
         pygame.draw.rect(surface, self._active_style.border_color, self._rect, self._active_style.border_width)
