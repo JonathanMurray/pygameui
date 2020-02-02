@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import List, Tuple, Callable, Any, Optional
 
 from pygame.color import Color
@@ -10,52 +11,76 @@ from ui import Style
 COLOR_WHITE = Color(255, 255, 255)
 
 
-class ButtonHold:
+class ButtonEvent(Enum):
+  FIRE = 1
+  RELEASE = 2
+
+
+class ButtonBehavior:
+  def on_click(self) -> Optional[ButtonEvent]:
+    return None
+
+  def update(self, elapsed_time: int) -> Optional[ButtonEvent]:
+    return None
+
+  def on_release(self) -> Optional[ButtonEvent]:
+    return None
+
+
+class HoldDownBehavior(ButtonBehavior):
   def __init__(self, initial_delay: int, repeat_interval: int):
     self._initial_delay = initial_delay
     self._repeat_interval = repeat_interval
     self._is_held_down = False
     self._fire_timer = 0
 
-  def update(self, elapsed_time: int):
+  def on_click(self) -> Optional[ButtonEvent]:
+    self._is_held_down = True
+    self._fire_timer = self._initial_delay
+    return ButtonEvent.FIRE
+
+  def update(self, elapsed_time: int) -> Optional[ButtonEvent]:
     should_fire = False
     if self._is_held_down:
       self._fire_timer -= elapsed_time
       while self._fire_timer <= 0:
         self._fire_timer += self._repeat_interval
         should_fire = True
-    return should_fire
+    if should_fire:
+      return ButtonEvent.FIRE
 
-  def on_click(self):
-    self._is_held_down = True
-    self._fire_timer = self._initial_delay
-
-  def on_release(self):
+  def on_release(self) -> Optional[ButtonEvent]:
     self._is_held_down = False
+    return ButtonEvent.RELEASE
+
+
+class SingleClickBehavior(ButtonBehavior):
+  def __init__(self):
+    self._cooldown = 0
+
+  def on_click(self) -> Optional[ButtonEvent]:
+    self._cooldown = 150
+    return ButtonEvent.FIRE
+
+  def update(self, elapsed_time: int) -> Optional[ButtonEvent]:
+    if self._cooldown > 0:
+      self._cooldown = max(self._cooldown - elapsed_time, 0)
+      if self._cooldown == 0:
+        return ButtonEvent.RELEASE
 
 
 class Button(Component):
-  def __init__(self, size: Tuple[int, int], label: StaticText, hotkey: Optional[int] = None,
-      hold: Optional[ButtonHold] = None, **kwargs):
+  def __init__(self, size: Tuple[int, int], label: StaticText, behavior: ButtonBehavior,
+      hotkey: Optional[int] = None, **kwargs):
     super().__init__(size, **kwargs)
     self._callback = kwargs.get('callback')
     self._label = label
     self._style_on_click = kwargs.get('style_onclick')
-    self._cooldown = 0
     self._hotkey = hotkey
-    self._hold = hold
+    self._behavior = behavior
 
   def update(self, elapsed_time: int):
-    if self._hold:
-      if self._hold.update(elapsed_time):
-        self._invoke_callback()
-    if self._cooldown > 0:
-      self._cooldown = max(self._cooldown - elapsed_time, 0)
-      if self._cooldown == 0:
-        self._restore_style_after_click()
-
-  def _restore_style_after_click(self):
-    self._active_style = self._style_hovered if self._is_hovered else self._style
+    self._handle_event(self._behavior.update(elapsed_time))
 
   def set_callback(self, callback: Callable[[], Any]):
     self._callback = callback
@@ -70,32 +95,26 @@ class Button(Component):
     self._label.render(surface)
 
   def _on_click(self, mouse_pos: Optional[Tuple[int, int]]):
-    self._invoke_callback()
-    self._active_style = self._style_on_click
-    if self._hold:
-      self._hold.on_click()
-    else:
-      self._cooldown = 150
-
-  def _invoke_callback(self):
-    if self._callback:
-      self._callback()
+    self._handle_event(self._behavior.on_click())
 
   def handle_mouse_was_released(self):
-    self._handle_button_was_released()
+    self._handle_event(self._behavior.on_release())
 
   def handle_key_was_pressed(self, key):
     if self.is_visible() and self._hotkey == key:
-      self._on_click(None)
+      self._handle_event(self._behavior.on_click())
 
   def handle_key_was_released(self, key):
     if self._hotkey == key:
-      self._handle_button_was_released()
+      self._handle_event(self._behavior.on_release())
 
-  def _handle_button_was_released(self):
-    if self._hold:
-      self._hold.on_release()
-      self._restore_style_after_click()
+  def _handle_event(self, event: Optional[ButtonEvent]):
+    if event == ButtonEvent.FIRE:
+      self._active_style = self._style_on_click
+      if self._callback:
+        self._callback()
+    elif event == ButtonEvent.RELEASE:
+      self._active_style = self._style_hovered if self._is_hovered else self._style
 
 
 class ColorToggler(Button):
@@ -111,12 +130,12 @@ class ColorToggler(Button):
 
 
 def button(font, size: Tuple[int, int], callback: Callable[[], Any], label: str, hotkey: Optional[int] = None,
-    hold: Optional[ButtonHold] = None):
+    hold: Optional[HoldDownBehavior] = None):
   return Button(size=size,
                 callback=callback,
                 label=StaticText(font, COLOR_WHITE, label),
+                behavior=hold if hold else SingleClickBehavior(),
                 hotkey=hotkey,
-                hold=hold,
                 style=Style(background=Color(50, 50, 100), border_color=Color(150, 150, 150)),
                 style_hovered=Style(background=Color(80, 80, 120), border_color=Color(180, 180, 180)),
                 style_onclick=Style(background=Color(80, 80, 120), border_color=Color(200, 255, 200),

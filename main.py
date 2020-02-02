@@ -6,7 +6,7 @@ from pygame.font import Font
 from pygame.math import Vector2
 from pygame.time import Clock, set_timer
 
-from button import button, ButtonHold
+from button import button, HoldDownBehavior
 from checkbox import checkbox
 from containers import ListContainer, Orientation, AbsolutePosContainer, ScrollContainer, GridContainer
 from counter import Counter
@@ -120,12 +120,12 @@ def main():
 
 def number_button(font, text_area: EditableText, text: str, key):
   return button(font, (32, 32), callback=lambda: text_area.append(text), label=text, hotkey=key,
-                hold=ButtonHold(400, 60))
+                hold=HoldDownBehavior(400, 60))
 
 
 def backspace_button(font, text_area: EditableText):
   return button(font, (32, 32), callback=lambda: text_area.backspace(), label="<-", hotkey=pygame.K_BACKSPACE,
-                hold=ButtonHold(400, 60))
+                hold=HoldDownBehavior(400, 60))
 
 
 def handle_exit(event):
