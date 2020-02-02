@@ -10,7 +10,7 @@ from button import button
 from checkbox import checkbox
 from containers import ListContainer, Orientation, AbsolutePosContainer, ScrollContainer, GridContainer
 from counter import Counter
-from text import EditableText, FormattedText, StaticText
+from text import EditableText, FormattedText, StaticText, TextArea
 from ui import BackgroundGrid, Style
 
 SCREEN_RESOLUTION = (800, 600)
@@ -66,8 +66,8 @@ def main():
                                    orientation=Orientation.VERTICAL,
                                    style=Style(background=Color(150, 210, 255), border_color=COLOR_WHITE))
 
-  text_field = EditableText(font, (100, 24), padding=5, max_length=9,
-                            style=Style(border_color=COLOR_WHITE))
+  text_field = TextArea(font, COLOR_WHITE, (100, 100), padding=5,
+                        style=Style(border_color=COLOR_WHITE))
 
   grid_children = [
     number_button(font, text_field, "1", pygame.K_1),
@@ -117,10 +117,12 @@ def main():
 
 
 def number_button(font, text_area: EditableText, text: str, key):
+  # TODO handle holding down hotkey
   return button(font, (32, 32), callback=lambda: text_area.append(text), label=text, hotkey=key)
 
 
 def backspace_button(font, text_area: EditableText):
+  # TODO handle holding down hotkey
   return button(font, (32, 32), callback=lambda: text_area.backspace(), label="<-", hotkey=pygame.K_BACKSPACE)
 
 
