@@ -12,14 +12,24 @@ class StaticText(Component):
     super().__init__(font.size(text), **kwargs)
     self._font = font
     self._color = color
-    self._rendered_text = self._font.render(text, True, color)
+    self._text = text
+    self._rendered_text = None
+    self._update_text()
+
+  def _update_text(self):
+    self._rendered_text = self._font.render(self._text, True, self._color)
 
   def set_text(self, text: str):
-    self.size = self._font.size(text)
-    self._rendered_text = self._font.render(text, True, self._color)
+    self.set_size(self._font.size(text))
+    self._text = text
+    self._update_text()
 
   def _render_contents(self, surface):
     surface.blit(self._rendered_text, self._rect)
+
+  def set_color(self, color: Color):
+    self._color = color
+    self._update_text()
 
 
 class FormattedText(Component):

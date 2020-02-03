@@ -31,6 +31,7 @@ class Style:
     self.border_width = border_width
 
 
+# TODO Handle padding in component?
 class Component:
   def __init__(self, size: Tuple[int, int], **kwargs):
     self.size = size
@@ -46,6 +47,11 @@ class Component:
 
   def set_pos(self, pos: Vector2):
     self._rect = Rect(pos, self.size)
+
+  # TODO Have stricter control over size variable - make it private and always set it with this method?
+  def set_size(self, size: Tuple[int, int]):
+    self.size = size
+    self._rect.size = size
 
   def handle_key_was_pressed(self, key):
     pass

@@ -87,9 +87,19 @@ class Button(Component):
 
   def set_pos(self, pos: Vector2):
     super().set_pos(pos)
+    self._update_text_pos()
+
+  def _update_text_pos(self):
     text_pos = Vector2(self._rect.centerx - self._label.size[0] / 2,
                        self._rect.centery - self._label.size[1] / 2)
     self._label.set_pos(text_pos)
+
+  def set_label(self, label: str):
+    self._label.set_text(label)
+    self._update_text_pos()
+
+  def set_label_color(self, color: Color):
+    self._label.set_color(color)
 
   def _render_contents(self, surface):
     self._label.render(surface)
