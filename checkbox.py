@@ -11,7 +11,7 @@ from ui import Style
 
 COLOR_WHITE = Color(255, 255, 255)
 
-
+# TODO re-use behavior from Button?
 class Checkbox(Component):
   def __init__(self, size: Tuple[int, int], label: StaticText, checked: bool = False, **kwargs):
     super().__init__(size, **kwargs)
