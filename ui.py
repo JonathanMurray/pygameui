@@ -113,4 +113,4 @@ class Component:
 
   def _assert_initialized(self):
     if self._rect is None:
-      raise Exception("You must set the position of this component before interacting with it!")
+      raise Exception("You must set the position of this component before interacting with it: %s" % self)

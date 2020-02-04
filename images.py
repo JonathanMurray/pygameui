@@ -8,11 +8,17 @@ from ui import Component, Style
 
 class Surface(Component):
   def __init__(self, surface, **kwargs):
-    super().__init__(surface.get_size(), **kwargs)
+    size = surface.get_size() if surface else (1, 1)
+    super().__init__(size, **kwargs)
     self._surface = surface
 
   def _render_contents(self, surface):
-    surface.blit(self._surface, self._rect)
+    if self._surface is not None:
+      surface.blit(self._surface, self._rect)
+
+  def set_surface(self, surface):
+    self._surface = surface
+    super().set_size(surface.get_size())
 
 
 def image_surface(file_path: str, size: Tuple[int, int]) -> Surface:

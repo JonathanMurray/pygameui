@@ -127,8 +127,12 @@ class ListContainer(AbstractContainer):
 
 
 class EvenSpacingContainer(AbstractContainer):
-  def __init__(self, size: Tuple[int, int], children: List[Component], padding: int, **kwargs):
-    super().__init__(size, children, **kwargs)
+  def __init__(self, width: int, height: Any, children: List[Component], padding: int, **kwargs):
+    if height == 'fit_contents':
+      container_height = max(c.size[1] for c in children) + padding * 2
+    else:
+      container_height = height
+    super().__init__((width, container_height), children, **kwargs)
     self._padding = padding
 
   def set_pos(self, pos: Vector2):

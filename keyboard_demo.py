@@ -72,7 +72,7 @@ def main():
 
   keyboard = GridContainer(children=key_components, dimensions=(10, 3), padding=5, margin=5,
                            style=Style(background_color=KEYBOARD_BACKGROUND_COLOR, border_color=WHITE))
-  keyboard_container = EvenSpacingContainer((SCREEN_RESOLUTION[0] - PADDING * 2, 300), [keyboard], padding=0)
+  keyboard_container = EvenSpacingContainer(SCREEN_RESOLUTION[0] - PADDING * 2, 300, [keyboard], padding=0)
 
   container = AbsolutePosContainer(SCREEN_RESOLUTION,
                                    [(Vector2(PADDING, PADDING), terminal), (Vector2(PADDING, 360), keyboard_container)])

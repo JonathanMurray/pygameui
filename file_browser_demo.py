@@ -10,8 +10,9 @@ from pygame.time import Clock
 
 from button import HoldDownBehavior, Button, SingleClickBehavior
 from containers import GridContainer, EvenSpacingContainer, AbsolutePosContainer
+from images import Surface
 from text import StaticText, TextArea
-from ui import Style
+from ui import Style, Component
 
 MATRIX_GREEN = Color(32, 194, 14)
 WHITE = Color(255, 255, 255)
@@ -29,10 +30,11 @@ class FileBrowser:
   def __init__(self):
     pygame.init()
     screen = pygame.display.set_mode(SCREEN_RESOLUTION)
-    pygame.display.set_caption("Keyboard & Terminal")
+    pygame.display.set_caption("File browser")
     clock = Clock()
 
     font = Font('resources/consola.ttf', 14)
+    font_small = Font('resources/consola.ttf', 12)
     background_color = (0, 0, 0)
 
     grid_dimensions = (3, 10)
@@ -41,19 +43,18 @@ class FileBrowser:
     grid = GridContainer(children=self.buttons, dimensions=grid_dimensions, padding=5, margin=1,
                          style=Style(background_color=KEYBOARD_BACKGROUND_COLOR, border_color=WHITE))
     width = SCREEN_RESOLUTION[0] - PADDING * 2
-    grid_container = EvenSpacingContainer((width, 200), [grid], padding=0)
+    grid_container = EvenSpacingContainer(width, "fit_contents", [grid], padding=0)
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
     self.text_current_dir = StaticText(font, WHITE, dir_path,
                                        style=Style(background_color=Color(50, 50, 50)))
     self.file_names = os.listdir(".")
-    self.text_area_preview = TextArea(font, WHITE, (width, 200), 5,
-                                      style=Style(border_color=WHITE))
+    self.preview = FilePreview((width, 230), font_small)
 
     container = AbsolutePosContainer(SCREEN_RESOLUTION,
                                      [(Vector2(PADDING, PADDING), self.text_current_dir),
-                                      (Vector2(PADDING, 60), self.text_area_preview),
-                                      (Vector2(PADDING, 300), grid_container)])
+                                      (Vector2(PADDING, 80), self.preview),
+                                      (Vector2(PADDING, 330), grid_container)])
     container.set_pos(Vector2(0, 0))
 
     self.setup_keys()
@@ -92,11 +93,14 @@ class FileBrowser:
       else:
         try:
           with open(filename, "r") as f:
-            self.text_area_preview.set_text("")
             text = f.read()
-            self.text_area_preview.set_text(text)
+            self.preview.show_text(text)
         except UnicodeDecodeError:
-          self.text_area_preview.set_text("BINARY FILE - CONTENTS NOT SHOWN")
+          try:
+            image = pygame.image.load(filename)
+            self.preview.show_image(image)
+          except pygame.error:
+            self.preview.show_text("BINARY FILE - CONTENTS NOT SHOWN")
 
     return callback
 
@@ -112,6 +116,36 @@ class FileBrowser:
       else:
         btn.set_label("")
         btn.set_callback(lambda: None)
+
+
+class FilePreview(Component):
+  def __init__(self, size: Tuple[int, int], font):
+    super().__init__(size)
+    self._text_component = TextArea(font, WHITE, size, padding=16,
+                                    style=Style(border_color=WHITE))
+    self._image_component = Surface(None, style=Style(border_color=WHITE))
+
+  def set_pos(self, pos: Vector2):
+    super().set_pos(pos)
+    self._text_component.set_pos(pos)
+    self._image_component.set_pos(pos)
+
+  def show_text(self, text: str):
+    self._text_component.set_text(text)
+    self._text_component.set_visible(True)
+    self._image_component.set_visible(False)
+
+  def show_image(self, image):
+    image_rect = image.get_rect()
+    scaled_rect = image_rect.fit(self._rect)
+    scaled_image = pygame.transform.scale(image, scaled_rect.size)
+    self._image_component.set_surface(scaled_image)
+    self._text_component.set_visible(False)
+    self._image_component.set_visible(True)
+
+  def _render_contents(self, surface):
+    self._text_component.render(surface)
+    self._image_component.render(surface)
 
 
 def handle_exit(event):
