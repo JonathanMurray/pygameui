@@ -104,29 +104,52 @@ class TextArea(Component):
     self._color = color
     self._blinking_cursor = blinking_cursor
     self._line_surfaces = []
-    self._update_text()
+
+  def set_pos(self, pos: Vector2):
+    super().set_pos(pos)
+    self._render_text()
 
   def update(self, elapsed_time: int):
     if self._blinking_cursor and self._blinking_cursor.update(elapsed_time):
-      self._update_text()
+      self._render_text()
 
-  def _update_text(self):
+  def _render_text(self):
     self._line_surfaces = []
-    start_line = 0
+    line_start_index = 0
     final_line = ""
+    accumulated_height = 0
+    height_limit = self._rect.h - self._padding * 2
+
     for i in range(len(self._text)):
+
+      # 1. Handle newline char
       if self._text[i] == '\n':
-        line = self._text[start_line:i]
-        self._line_surfaces.append(self._render_line(line))
-        start_line = i + 1
-      window = self._text[start_line:i + 1]
+        line = self._text[line_start_index:i]
+        surface = self._render_line(line)
+        height = surface.get_size()[1]
+        if accumulated_height + height > height_limit:
+          break
+        self._line_surfaces.append(surface)
+        accumulated_height += height
+        line_start_index = i + 1
+
+      # 2. Break line if it exceeds max length
+      window = self._text[line_start_index:i + 1]
       rendered_width = self._font.size(window)[0]
       if rendered_width > self.size[0] - self._padding * 2:
-        truncated_line = self._text[start_line:i]
-        self._line_surfaces.append(self._render_line(truncated_line))
-        start_line = i
+        truncated_line = self._text[line_start_index:i]
+        surface = self._render_line(truncated_line)
+        height = surface.get_size()[1]
+        if accumulated_height + height > height_limit:
+          break
+        self._line_surfaces.append(surface)
+        accumulated_height += height
+        line_start_index = i
+
+      # 3. Handle final line
       if i == len(self._text) - 1:
-        final_line = self._text[start_line:i + 1]
+        final_line = self._text[line_start_index:i + 1]
+
     if self._blinking_cursor and self._blinking_cursor.is_visible():
       line_trailer = "_"
     else:
@@ -144,8 +167,12 @@ class TextArea(Component):
 
   def append(self, text: str):
     self._text += text
-    self._update_text()
+    self._render_text()
 
   def backspace(self):
     self._text = self._text[:-1]
-    self._update_text()
+    self._render_text()
+
+  def set_text(self, text: str):
+    self._text = text
+    self._render_text()
