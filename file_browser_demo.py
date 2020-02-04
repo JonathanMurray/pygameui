@@ -14,6 +14,8 @@ from images import Surface
 from text import StaticText, TextArea
 from ui import Style, Component
 
+LIGHT_GRAY = Color(180, 180, 180)
+
 MATRIX_GREEN = Color(32, 194, 14)
 WHITE = Color(255, 255, 255)
 KEYBOARD_BACKGROUND_COLOR = Color(100, 100, 100)
@@ -30,7 +32,7 @@ class FileBrowser:
   def __init__(self):
     pygame.init()
     screen = pygame.display.set_mode(SCREEN_RESOLUTION)
-    pygame.display.set_caption("File browser")
+    pygame.display.set_caption("FILE BROWSER")
     clock = Clock()
 
     font = Font('resources/consola.ttf', 14)
@@ -41,7 +43,7 @@ class FileBrowser:
     self.buttons = [blank_button(font) for _ in range(grid_dimensions[0] * grid_dimensions[1])]
 
     grid = GridContainer(children=self.buttons, dimensions=grid_dimensions, padding=5, margin=1,
-                         style=Style(background_color=KEYBOARD_BACKGROUND_COLOR, border_color=WHITE))
+                         style=Style(background_color=KEYBOARD_BACKGROUND_COLOR, border_color=LIGHT_GRAY))
     width = SCREEN_RESOLUTION[0] - PADDING * 2
     grid_container = EvenSpacingContainer(width, "fit_contents", [grid], padding=0)
 
@@ -58,6 +60,8 @@ class FileBrowser:
     container.set_pos(Vector2(0, 0))
 
     self.setup_keys()
+
+    self.change_dir("/Users/jonathan/dev/pythongame/resources")
 
     while True:
       for event in pygame.event.get():
@@ -94,13 +98,18 @@ class FileBrowser:
         try:
           with open(filename, "r") as f:
             text = f.read()
-            self.preview.show_text(text)
+            self.preview.show_text("Text file: %s\n\n%s" % (filename, text))
         except UnicodeDecodeError:
           try:
             image = pygame.image.load(filename)
             self.preview.show_image(image)
           except pygame.error:
-            self.preview.show_text("BINARY FILE - CONTENTS NOT SHOWN")
+            try:
+              sound = pygame.mixer.Sound(filename)
+              self.preview.show_text("Sound file: %s\n\nDuration: %.3f seconds" % (filename, sound.get_length()))
+              sound.play()
+            except pygame.error:
+              self.preview.show_text("Unknown file: %s\n\ncontents not shown" % filename)
 
     return callback
 
@@ -122,8 +131,8 @@ class FilePreview(Component):
   def __init__(self, size: Tuple[int, int], font):
     super().__init__(size)
     self._text_component = TextArea(font, WHITE, size, padding=16,
-                                    style=Style(border_color=WHITE))
-    self._image_component = Surface(None, style=Style(border_color=WHITE))
+                                    style=Style(border_color=LIGHT_GRAY))
+    self._image_component = Surface(None, style=Style(border_color=LIGHT_GRAY))
 
   def set_pos(self, pos: Vector2):
     super().set_pos(pos)
