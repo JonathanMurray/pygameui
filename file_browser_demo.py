@@ -62,8 +62,6 @@ class FileBrowser:
 
     self.setup_keys()
 
-    self.change_dir("/Users/jonathan/dev/pythongame/resources")
-
     while True:
       for event in pygame.event.get():
         handle_exit(event)
